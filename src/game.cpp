@@ -5,42 +5,97 @@
 #include "../includes/setup.hpp"
 #include "../includes/input.hpp"
 
-#define MAX_BUILDINGS 100
+#define DEBUG_MODE true
 
 int main(void) {
   Screen screen = setupWindow(1920,1080,true);
 
-  Camera2D camera = { 0 };
-  camera.zoom = 1.0f;
-  camera.rotation = 0.0f;
-  camera.target = (Vector2) { screen.screenWidth / 2.0f, screen.screenHeight / 2.0f };
-  camera.offset = (Vector2) { screen.screenWidth / 2.0f, screen.screenHeight / 2.0f };
+  /**
+   * @def Cameras Setup
+   * @param camera -  Development camera
+   * @param cameraPlay - Play camera, used in play mode
+  */
+  Camera2D camera = setupCamera(1.0f,0.0f,{ 0, 0 }, { screen.screenWidth / 2.0f, screen.screenHeight / 2.0f });
+  Camera2D cameraPlay = setupCamera(0.75f, 0.0f, { 2000, 100 }, {screen.screenWidth / 2.0f, screen.screenHeight / 2.0f });
+  RenderTexture screenCamera1 = LoadRenderTexture(screen.screenWidth, screen.screenHeight);
+  RenderTexture screenCamera2 = LoadRenderTexture(screen.screenWidth, screen.screenHeight);
+
+  // Since Renderization OpenGL handle the coordinates differently, we need to flip the Y axis to draw the image
+  Rectangle screenFlipped = { 0.0f, 0.0f, (float)screenCamera1.texture.width, (float) -screenCamera1.texture.height };
+
+  /**
+   * @enum 1 - Development Camera
+   * @enum 2 - Play Camera
+  */
+  int actualCamera = 1;
 
   SetTargetFPS(60);
-  bool engineDidMount = false;
+
   // Game Loop
   while (!WindowShouldClose()) {
-    MoveAxisWithMouse(&camera);
-    ZoomAxisWithMouseWheel(&camera);
+    getGameInput(&camera, &actualCamera);
 
-    Vector2 mousePosition = GetScreenToWorld2D(GetMousePosition(), camera);
-    DrawText(TextFormat("Position x: %f", mousePosition.x/100),10,10,20, BLACK);
-    DrawText(TextFormat("Position y: %f", mousePosition.y/100),10,30,20, BLACK);
-    DrawText(TextFormat("Camera Zoom: %f", camera.zoom),10,50,20, BLACK);
+    /**
+     * @attention Development Camera
+    */
+    BeginTextureMode(screenCamera1);
+        ClearBackground(RAYWHITE);
+        
+        BeginMode2D(camera);
 
+          DrawEngineGrid2D(1000, 50, screen, &camera);
+          DrawPlayCameraSilhouette(cameraPlay, screen);
+
+        EndMode2D();
+
+        DrawGUI(camera);
+
+
+        // Debug block code
+        if (DEBUG_MODE) {
+          DrawDebugBoard(camera);
+        }
+
+    EndTextureMode();
+
+    // --------------------------------------------------------------------------------------------------------------------
+    
+    /**
+     * @attention Game camera
+    */
+    BeginTextureMode(screenCamera2);
+        ClearBackground(RAYWHITE);
+      
+        
+        BeginMode2D(cameraPlay);
+
+          // Debug block code
+          if (DEBUG_MODE) {
+            DrawEngineGrid2D(1000, 50, screen, &cameraPlay);
+          }
+
+        EndMode2D();
+
+        
+        // Debug block code
+        if (DEBUG_MODE) {
+          DrawDebugBoard(cameraPlay);
+          DrawRectangle(screen.screenWidth/2 - 5,screen.screenHeight/2 - 5,10.0f,10.0f, BLACK);
+        }
+
+    EndTextureMode();
+
+    // --------------------------------------------------------------------------------------------------------------------
 
     BeginDrawing();
-    
-    ClearBackground(RAYWHITE);
+      ClearBackground(RAYWHITE);
 
-    BeginMode2D(camera);
+      if (actualCamera == 1) {
+        DrawTextureRec(screenCamera1.texture, screenFlipped, { 0, 0 }, WHITE);
+      } else {
+        DrawTextureRec(screenCamera2.texture, screenFlipped, { 0, 0 }, WHITE);
+      }
 
-    DrawEngineGrid2D(1000, 50, screen, &camera, &engineDidMount);
-
-    EndMode2D();
-
-
-    DrawGUI(camera);
 
     EndDrawing();
   }

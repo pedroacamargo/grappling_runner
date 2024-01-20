@@ -15,3 +15,14 @@ Screen setupWindow(int width, int height, bool isFullScreen) {
 
     return screen;
 }
+
+
+Camera2D setupCamera(float zoom, float rotation, Vector2 target, Vector2 offset) {
+    Camera2D camera = { 0 };
+    camera.offset = offset;
+    camera.rotation = rotation;
+    camera.target = target;
+    camera.zoom = zoom;
+
+    return camera;
+}
