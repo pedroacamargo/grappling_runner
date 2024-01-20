@@ -1,13 +1,22 @@
 #include "../includes/draw.hpp"
 
-void createBuildings(Rectangle *buildings, Color *buildColors, int screenHeight, int screenWidth, int spacing) {
-    for (int i = 0; i < MAX_BUILDINGS; i++) {
-        buildings[i].width = (float) GetRandomValue(50, 200);
-        buildings[i].height = (float) GetRandomValue(100, 800);
-        buildings[i].y = screenHeight - 130.0f - buildings[i].height;
-        buildings[i].x = -6000.0f + spacing;
-        spacing += (int) buildings[i].width;
+void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *camera, bool *engineDidMount) {
+    int centerWidth = screen.screenWidth/2;
+    int centerHeight = screen.screenHeight/2;
 
-        buildColors[i] = (Color) { (unsigned char) GetRandomValue(200, 240), (unsigned char) GetRandomValue(200, 240), (unsigned char) GetRandomValue(200, 250), 255 };
-    }
+    rlPushMatrix();
+      rlTranslatef(0, centerHeight + ((gridSpacing / 2)*(gridSize / 2)), 0);
+      rlRotatef(90, 1, 0, 0);
+      DrawGrid(gridSize,gridSpacing);
+    rlPopMatrix();
+}
+
+void DrawGUI(Camera2D camera) {
+    float offset = 5.0f;
+    int GUIWidth = 400;
+    float screenWidth = GetScreenWidth();
+    float screenHeight = GetScreenHeight() - offset;
+    Vector2 screenPosition = { screenWidth - (GUIWidth + offset), offset };
+    DrawRectangle(screenPosition.x, screenPosition.y, GUIWidth, screenHeight - offset, BLACK);
+    DrawText(TextFormat("x: %f", ceil(screenPosition.x)),10,70,20, BLACK);
 }

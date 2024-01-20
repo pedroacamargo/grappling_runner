@@ -1,10 +1,14 @@
 #include "raylib.h"
+#include "raymath.h"
+#include "rlgl.h"
+#include <cmath>
+#include "../includes/setup.hpp"
 
 #ifndef __DRAW_H__
 #define __DRAW_H__
 
-#define MAX_BUILDINGS 100
+void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *camera, bool *engineDidMount);
 
-void createBuildings(Rectangle *buildings, Color *buildColors, int screenHeight, int screenWidth, int spacing);
+void DrawGUI(Camera2D camera);
 
 #endif
