@@ -1,7 +1,5 @@
+#pragma once
 #include "raylib.h"
-
-#ifndef __SETUP_H__
-#define __SETUP_H__
 
 typedef struct screen {
     int screenWidth;
@@ -23,5 +21,3 @@ Screen setupWindow(int width, int height, bool isFullScreen);
  * @param offset - Camera offset, give { screenWidth / 2, screenHeight / 2 } to center the camera in your screen
 */
 Camera2D setupCamera(float zoom, float rotation, Vector2 target, Vector2 offset);
-
-#endif

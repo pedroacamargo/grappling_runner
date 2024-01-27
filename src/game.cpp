@@ -48,7 +48,7 @@ int main(void) {
 
         EndMode2D();
 
-        DrawGUI(camera);
+        // DrawGUI(camera);
 
 
         // Debug block code
