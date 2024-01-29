@@ -4,8 +4,7 @@
 #include "../includes/draw.hpp"
 #include "../includes/setup.hpp"
 #include "../includes/input.hpp"
-
-#define DEBUG_MODE true
+#include "../includes/globals.hpp"
 
 int main(void) {
   Screen screen = setupWindow(1920,1080,true);
@@ -29,17 +28,24 @@ int main(void) {
   */
   int actualCamera = 1;
 
+  Vector2 mousePosition = { 0 };
+  Font defaultFont = GetFontDefault();
+  GUI interface = setupGUI(400,screen);
+  int engine_mode = DEBUG_MODE;
+
   SetTargetFPS(60);
 
   // Game Loop
   while (!WindowShouldClose()) {
+    mousePosition = GetMousePosition();
     getGameInput(&camera, &actualCamera);
 
     /**
      * @attention Development Camera
     */
     BeginTextureMode(screenCamera1);
-        ClearBackground(RAYWHITE);
+        if (engine_mode == EDIT_MODE) ClearBackground(SKYBLUE);
+        else ClearBackground(RAYWHITE);
         
         BeginMode2D(camera);
 
@@ -48,11 +54,11 @@ int main(void) {
 
         EndMode2D();
 
-        // DrawGUI(camera);
+        DrawGUI(camera,mousePosition,&interface,screen,defaultFont,&engine_mode);
 
 
         // Debug block code
-        if (DEBUG_MODE) {
+        if (engine_mode == DEBUG_MODE) {
           DrawDebugBoard(camera);
         }
 
@@ -70,7 +76,7 @@ int main(void) {
         BeginMode2D(cameraPlay);
 
           // Debug block code
-          if (DEBUG_MODE) {
+          if (engine_mode == DEBUG_MODE) {
             DrawEngineGrid2D(1000, 50, screen, &cameraPlay);
           }
 
@@ -78,7 +84,7 @@ int main(void) {
 
         
         // Debug block code
-        if (DEBUG_MODE) {
+        if (engine_mode == DEBUG_MODE) {
           DrawDebugBoard(cameraPlay);
           DrawRectangle(screen.screenWidth/2 - 5,screen.screenHeight/2 - 5,10.0f,10.0f, BLACK);
         }

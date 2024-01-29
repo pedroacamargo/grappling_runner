@@ -26,3 +26,17 @@ Camera2D setupCamera(float zoom, float rotation, Vector2 target, Vector2 offset)
 
     return camera;
 }
+
+GUI setupGUI(int width, Screen screen) {
+    GUI newGUI; 
+    newGUI.GUI_color = { 37, 37, 37, 255 };
+    newGUI.Button_color = { 157, 157, 157, 255 };
+    newGUI.Toggle_color = { 26, 26, 26, 255 };
+    newGUI.isOpened = true;
+    newGUI.width = 400;
+    newGUI.position = {
+        (float) screen.screenWidth - newGUI.width,
+        0
+    };
+    return newGUI;
+}

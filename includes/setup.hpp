@@ -6,6 +6,15 @@ typedef struct screen {
     int screenHeight;
 } Screen;
 
+typedef struct gui {
+    Color GUI_color;
+    Color Button_color;
+    Color Toggle_color;
+    int width;
+    Vector2 position;
+    bool isOpened;
+} GUI;
+
 /**
  * A function that will setup the window and create a _x_ resolution window in fullscreen
  * @param width Display width resolution
@@ -21,3 +30,5 @@ Screen setupWindow(int width, int height, bool isFullScreen);
  * @param offset - Camera offset, give { screenWidth / 2, screenHeight / 2 } to center the camera in your screen
 */
 Camera2D setupCamera(float zoom, float rotation, Vector2 target, Vector2 offset);
+
+GUI setupGUI(int width, Screen screen);
