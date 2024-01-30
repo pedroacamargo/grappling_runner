@@ -19,8 +19,17 @@ Rectangle createRectangle(Vector2 mouseWorldPosition) {
     return rec;
 }
 
-void editModeHandler(int *engine_mode, Vector2 mouseWorldPosition, RectangleList *recList) {
-    if (isEditModeOn(engine_mode)) {
+void editModeHandler(int *engine_mode, Vector2 mouseWorldPosition, Vector2 mousePosition, RectangleList *recList, GUI interface, Screen screen) {
+
+    // Check if the mouse is over the GUI
+    bool overwriteGUI = 
+        CheckCollisionPointRec(mousePosition, {interface.position.x, interface.position.y, interface.width, (float) screen.screenHeight }) 
+        || 
+        CheckCollisionPointRec(mousePosition, {interface.toggleButton.position.x, interface.toggleButton.position.y, interface.toggleButton.size.width, interface.toggleButton.size.height });
+    
+
+
+    if (isEditModeOn(engine_mode) && !overwriteGUI) {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
             while(recList->nextRec != NULL) {
                 recList = recList->nextRec;

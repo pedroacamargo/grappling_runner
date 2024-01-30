@@ -1,5 +1,10 @@
 #pragma once
-
 #define DEBUG_MODE 0
 #define NORMAL_MODE 1
 #define EDIT_MODE 2
+#define EDIT_MODE_STATE_SELECT 0
+#define EDIT_MODE_STATE_CREATE 1
+#define EDIT_MODE_STATE_DELETE 2
+#define EDIT_MODE_STATE_MOVE 3
+#define EDIT_MODE_STATE_RESIZE 4
+

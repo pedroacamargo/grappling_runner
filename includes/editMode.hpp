@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "globals.hpp"
+#include "../includes/setup.hpp"
 #include <stdlib.h>
 
 typedef struct recList {
@@ -14,7 +15,7 @@ RectangleList *initRectangleList();
 
 Rectangle createRectangle(Vector2 mouseWorldPosition);
 
-void editModeHandler(int *engine_mode, Vector2 mouseWorldPosition, RectangleList *recList);
+void editModeHandler(int *engine_mode, Vector2 mouseWorldPosition, Vector2 mousePosition, RectangleList *recList, GUI interface, Screen screen);
 
 void drawRectangleList(RectangleList *recList);
 

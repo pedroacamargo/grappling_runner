@@ -1,19 +1,35 @@
 #pragma once
 #include "raylib.h"
 
+typedef struct size {
+    float width;
+    float height;
+} Size;
+
 typedef struct screen {
     int screenWidth;
     int screenHeight;
 } Screen;
 
+typedef struct toggleButton {
+    Size size;
+    Vector2 position;
+} GUIToggleButton;
+
 typedef struct gui {
     Color GUI_color;
     Color Button_color;
     Color Toggle_color;
-    int width;
+    GUIToggleButton toggleButton;
+    float width;
     Vector2 position;
     bool isOpened;
 } GUI;
+
+typedef struct modes {
+    int engine_mode;
+    int editModeState;
+} Modes;
 
 /**
  * A function that will setup the window and create a _x_ resolution window in fullscreen

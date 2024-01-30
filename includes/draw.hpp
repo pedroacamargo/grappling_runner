@@ -5,6 +5,7 @@
 #include <cmath>
 #include "../includes/setup.hpp"
 #include "../includes/globals.hpp"
+#include "../includes/guiComponents.hpp"
 
 void DrawDebugBoard(Camera2D camera);
 

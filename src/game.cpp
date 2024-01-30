@@ -52,7 +52,7 @@ int main(void) {
    * @enum 1 - Edit Mode
    * @enum 2 - Debug Mode
   */
-  int engine_mode = DEBUG_MODE;
+  Modes modes = { DEBUG_MODE, EDIT_MODE_STATE_SELECT };
 
   SetTargetFPS(60);
 
@@ -60,29 +60,29 @@ int main(void) {
   while (!WindowShouldClose()) {
     mousePosition = GetMousePosition();
     mousePositionWorld = GetScreenToWorld2D(mousePosition, camera);
-    getGameInput(&camera, &actualCamera, &engine_mode);
+    getGameInput(&camera, &actualCamera, &modes.engine_mode);
 
     /**
      * @attention Development Camera
     */
     BeginTextureMode(screenCamera1);
-        if (engine_mode == EDIT_MODE) ClearBackground(SKYBLUE);
+        if (modes.engine_mode == EDIT_MODE) ClearBackground(SKYBLUE);
         else ClearBackground(RAYWHITE);
         
         BeginMode2D(camera);
 
           DrawEngineGrid2D(1000, 50, screen, &camera);
           DrawPlayCameraSilhouette(cameraPlay, screen);
-          editModeHandler(&engine_mode, mousePositionWorld, recList);
+          editModeHandler(&modes.engine_mode, mousePositionWorld, mousePosition, recList, interface, screen);
           drawRectangleList(recList);
 
         EndMode2D();
 
-        DrawGUI(camera,mousePosition,&interface,screen,defaultFont,&engine_mode);
+        DrawGUI(camera,mousePosition,&interface,screen,defaultFont,&modes.engine_mode);
 
 
         // Debug block code
-        if (engine_mode == DEBUG_MODE) {
+        if (modes.engine_mode == DEBUG_MODE) {
           DrawDebugBoard(camera);
         }
 
@@ -100,7 +100,7 @@ int main(void) {
         BeginMode2D(cameraPlay);
 
           // Debug block code
-          if (engine_mode == DEBUG_MODE) {
+          if (modes.engine_mode == DEBUG_MODE) {
             DrawEngineGrid2D(1000, 50, screen, &cameraPlay);
           }
 
@@ -110,7 +110,7 @@ int main(void) {
 
         
         // Debug block code
-        if (engine_mode == DEBUG_MODE) {
+        if (modes.engine_mode == DEBUG_MODE) {
           DrawDebugBoard(cameraPlay);
           DrawRectangle(screen.screenWidth/2 - 5,screen.screenHeight/2 - 5,10.0f,10.0f, BLACK);
         }
