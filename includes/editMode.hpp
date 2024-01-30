@@ -1,22 +1,22 @@
 #pragma once
 #include "raylib.h"
+#include "raymath.h"
 #include "globals.hpp"
+#include <vector>
 #include "../includes/setup.hpp"
+#include "../includes/globals.hpp"
 #include <stdlib.h>
-
-typedef struct recList {
-    Rectangle rec;
-    struct recList *nextRec;
-} RectangleList;
 
 bool isEditModeOn(int *engine_mode);
 
-RectangleList *initRectangleList();
-
 Rectangle createRectangle(Vector2 mouseWorldPosition);
 
-void editModeHandler(int *engine_mode, Vector2 mouseWorldPosition, Vector2 mousePosition, RectangleList *recList, GUI interface, Screen screen);
+void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosition, GUI interface, Screen screen);
 
-void drawRectangleList(RectangleList *recList);
+void drawRectangleList(std::vector<Block> blockList);
 
-void freeRectangleList(RectangleList *recList);
+EditModeGUI setupEditModeGUI(Screen screen);
+
+void drawEditModeGUI(Screen screen, Modes *modes);
+
+void drawEditModeSelectButton(Screen screen, Modes *modes, int btnNumber, float size);

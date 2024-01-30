@@ -1,11 +1,12 @@
 #include "raylib.h"
 #include "rlgl.h"
 #include "raymath.h"
-#include "../includes/draw.hpp"
-#include "../includes/setup.hpp"
-#include "../includes/input.hpp"
+#include <vector>
 #include "../includes/globals.hpp"
+#include "../includes/setup.hpp"
 #include "../includes/editMode.hpp"
+#include "../includes/input.hpp"
+#include "../includes/draw.hpp"
 
 int main(void) {
   Screen screen = setupWindow(1920,1080,true);
@@ -38,7 +39,14 @@ int main(void) {
   /**
    * @def Rectangle List Setup
   */
-  RectangleList *recList = initRectangleList();
+  std::vector<Block> blockList;
+  EditModeGUI editModeInterface = setupEditModeGUI(screen);
+  EditMode editMode;
+  editMode.editModeState = EDIT_MODE_STATE_CREATE;
+  editMode.selectedBlock = -1;
+  editMode.blockList = blockList;
+  editMode.editModeInterface = editModeInterface;
+  
 
   /**
    * @def Mouse Position
@@ -52,7 +60,7 @@ int main(void) {
    * @enum 1 - Edit Mode
    * @enum 2 - Debug Mode
   */
-  Modes modes = { DEBUG_MODE, EDIT_MODE_STATE_SELECT };
+  Modes modes = { DEBUG_MODE, editMode };
 
   SetTargetFPS(60);
 
@@ -60,7 +68,7 @@ int main(void) {
   while (!WindowShouldClose()) {
     mousePosition = GetMousePosition();
     mousePositionWorld = GetScreenToWorld2D(mousePosition, camera);
-    getGameInput(&camera, &actualCamera, &modes.engine_mode);
+    getGameInput(&camera, &actualCamera, &modes);
 
     /**
      * @attention Development Camera
@@ -73,13 +81,13 @@ int main(void) {
 
           DrawEngineGrid2D(1000, 50, screen, &camera);
           DrawPlayCameraSilhouette(cameraPlay, screen);
-          editModeHandler(&modes.engine_mode, mousePositionWorld, mousePosition, recList, interface, screen);
-          drawRectangleList(recList);
+          editModeHandler(&modes, mousePositionWorld, mousePosition, interface, screen);
+          drawRectangleList(modes.editMode.blockList);
 
         EndMode2D();
 
         DrawGUI(camera,mousePosition,&interface,screen,defaultFont,&modes.engine_mode);
-
+        drawEditModeGUI(screen, &modes);
 
         // Debug block code
         if (modes.engine_mode == DEBUG_MODE) {
@@ -104,7 +112,7 @@ int main(void) {
             DrawEngineGrid2D(1000, 50, screen, &cameraPlay);
           }
 
-          drawRectangleList(recList);
+          drawRectangleList(blockList);
 
         EndMode2D();
 
@@ -132,7 +140,6 @@ int main(void) {
     EndDrawing();
   }
 
-  freeRectangleList(recList);
   CloseWindow();
 
   return 0;

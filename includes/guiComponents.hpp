@@ -3,8 +3,8 @@
 #include "raymath.h"
 #include "rlgl.h"
 #include <cmath>
-#include "../includes/setup.hpp"
-#include "../includes/globals.hpp"
+#include "setup.hpp"
+#include "globals.hpp"
 
 
 void DrawToggleGUI(GUI *interface, Screen screen, Font font, Vector2 mousePosition);

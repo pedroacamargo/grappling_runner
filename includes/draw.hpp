@@ -3,9 +3,9 @@
 #include "raymath.h"
 #include "rlgl.h"
 #include <cmath>
-#include "../includes/setup.hpp"
-#include "../includes/globals.hpp"
-#include "../includes/guiComponents.hpp"
+#include "setup.hpp"
+#include "globals.hpp"
+#include "guiComponents.hpp"
 
 void DrawDebugBoard(Camera2D camera);
 
