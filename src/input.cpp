@@ -23,12 +23,17 @@ void ZoomAxisWithMouseWheel(Camera2D *camera) {
     }
 }
 
-void getGameInput(Camera2D *camera, int *actualCamera) {
+void getGameInput(Camera2D *camera, int *actualCamera, int *engine_mode) {
     MoveAxisWithMouse(camera);
     ZoomAxisWithMouseWheel(camera);
 
     if (IsKeyPressed(KEY_Q)) {
-      if (*actualCamera == 1) *actualCamera = 2;
-      else *actualCamera = 1;
+      if (*actualCamera == 1) {
+        *actualCamera = 2;
+        *engine_mode = NORMAL_MODE;
+      } else {
+        *actualCamera = 1;
+        *engine_mode = DEBUG_MODE;
+      } 
     }
 }

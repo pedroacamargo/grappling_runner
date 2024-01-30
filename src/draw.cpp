@@ -8,6 +8,7 @@ void DrawDebugBoard(Camera2D camera) {
   DrawText(TextFormat("Camera Zoom: %f", camera.zoom),10,50,20, BLACK);
   DrawText(TextFormat("Camera Target x: %f", camera.target.x),10,70,20, BLACK);
   DrawText(TextFormat("Camera Target y: %f", camera.target.y),10,90,20, BLACK);
+  DrawText(TextFormat("FPS: %d", GetFPS()),10,110,20, RED);
 }
 
 void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *camera) {
@@ -35,6 +36,8 @@ void DrawGUI(Camera2D camera, Vector2 mousePosition, GUI *interface, Screen scre
 
   if (interface->isOpened && interface->position.x > screen.screenWidth - interface->width + 1 && interface->position.x < screen.screenWidth) {
     interface->position.x -= (interface->width * 2) * GetFrameTime(); // toggle GUI in 1/2 second
+
+    // Prevent GUI from going off screen
     if (interface->position.x < screen.screenWidth - interface->width)
       interface->position.x = screen.screenWidth - interface->width;
   }

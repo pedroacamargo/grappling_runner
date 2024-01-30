@@ -5,6 +5,7 @@
 #include "../includes/setup.hpp"
 #include "../includes/input.hpp"
 #include "../includes/globals.hpp"
+#include "../includes/editMode.hpp"
 
 int main(void) {
   Screen screen = setupWindow(1920,1080,true);
@@ -18,19 +19,39 @@ int main(void) {
   Camera2D cameraPlay = setupCamera(0.75f, 0.0f, { 2000, 100 }, {screen.screenWidth / 2.0f, screen.screenHeight / 2.0f });
   RenderTexture screenCamera1 = LoadRenderTexture(screen.screenWidth, screen.screenHeight);
   RenderTexture screenCamera2 = LoadRenderTexture(screen.screenWidth, screen.screenHeight);
-
-  // Since Renderization OpenGL handle the coordinates differently, we need to flip the Y axis to draw the image
-  Rectangle screenFlipped = { 0.0f, 0.0f, (float)screenCamera1.texture.width, (float) -screenCamera1.texture.height };
-
   /**
    * @enum 1 - Development Camera
    * @enum 2 - Play Camera
   */
   int actualCamera = 1;
 
-  Vector2 mousePosition = { 0 };
+  // Since Renderization OpenGL handle the coordinates differently, we need to flip the Y axis to draw the image
+  Rectangle screenFlipped = { 0.0f, 0.0f, (float)screenCamera1.texture.width, (float) -screenCamera1.texture.height };
+
+
+  /**
+   * @def GUI Setup
+  */
   Font defaultFont = GetFontDefault();
   GUI interface = setupGUI(400,screen);
+
+  /**
+   * @def Rectangle List Setup
+  */
+  RectangleList *recList = initRectangleList();
+
+  /**
+   * @def Mouse Position
+  */
+  Vector2 mousePosition = { 0 };
+  Vector2 mousePositionWorld = { 0 };
+
+  /**
+   * @def Engine Mode
+   * @enum 0 - Normal Mode
+   * @enum 1 - Edit Mode
+   * @enum 2 - Debug Mode
+  */
   int engine_mode = DEBUG_MODE;
 
   SetTargetFPS(60);
@@ -38,7 +59,8 @@ int main(void) {
   // Game Loop
   while (!WindowShouldClose()) {
     mousePosition = GetMousePosition();
-    getGameInput(&camera, &actualCamera);
+    mousePositionWorld = GetScreenToWorld2D(mousePosition, camera);
+    getGameInput(&camera, &actualCamera, &engine_mode);
 
     /**
      * @attention Development Camera
@@ -51,6 +73,8 @@ int main(void) {
 
           DrawEngineGrid2D(1000, 50, screen, &camera);
           DrawPlayCameraSilhouette(cameraPlay, screen);
+          editModeHandler(&engine_mode, mousePositionWorld, recList);
+          drawRectangleList(recList);
 
         EndMode2D();
 
@@ -80,6 +104,8 @@ int main(void) {
             DrawEngineGrid2D(1000, 50, screen, &cameraPlay);
           }
 
+          drawRectangleList(recList);
+
         EndMode2D();
 
         
@@ -106,6 +132,7 @@ int main(void) {
     EndDrawing();
   }
 
+  freeRectangleList(recList);
   CloseWindow();
 
   return 0;
