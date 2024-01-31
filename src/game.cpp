@@ -112,7 +112,7 @@ int main(void) {
             DrawEngineGrid2D(1000, 50, screen, &cameraPlay);
           }
 
-          drawRectangleList(blockList);
+          drawRectangleList(modes.editMode.blockList);
 
         EndMode2D();
 
