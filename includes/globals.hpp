@@ -32,6 +32,7 @@ typedef struct gui {
     float width;
     Vector2 position;
     bool isOpened;
+    int mouseState;
 } GUI;
 
 typedef struct block {

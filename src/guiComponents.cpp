@@ -17,8 +17,9 @@ void DrawToggleGUI(GUI *interface, Screen screen, Font font, Vector2 mousePositi
   );
 
   // Toggle GUI
-  if (CheckCollisionPointRec(mousePosition,toggleGUIRec)) {
-    SetMouseCursor(4);
+  if (CheckCollisionPointRec(mousePosition,toggleGUIRec) && !IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+    interface->mouseState = 4;
+
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
       (*interface).isOpened = !(*interface).isOpened;
       if (interface->isOpened) {
@@ -27,14 +28,13 @@ void DrawToggleGUI(GUI *interface, Screen screen, Font font, Vector2 mousePositi
         interface->position.x = screen.screenWidth - interface->width + 1;
       }
     }
-  } else {
-    SetMouseCursor(1);
   }
 }
 
-void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMargin, GUI *interface) {
+void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMargin, GUI *interface, float buttonHeight) {
   Vector2 positionButtonOne = { (*interface).position.x + buttonMargin , (*interface).position.y + buttonMargin }; 
-  Rectangle button_CreateRectangle = { positionButtonOne.x, positionButtonOne.y, (*interface).width - buttonMargin, 50 };
+  Rectangle button_CreateRectangle = { positionButtonOne.x, positionButtonOne.y, (*interface).width - buttonMargin, buttonHeight };
+
   if (CheckCollisionPointRec(mousePosition,button_CreateRectangle)) {
     SetMouseCursor(4);
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
@@ -48,7 +48,6 @@ void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMarg
     }
   } else {
     DrawRectangleRec(button_CreateRectangle,interface->Button_color);
-    SetMouseCursor(1);
     DrawText("Create a Rectangle",button_CreateRectangle.x + (button_CreateRectangle.width / 2) - 100.0f , button_CreateRectangle.y + (button_CreateRectangle.height / 2) - 10.0f , 20.0f,WHITE);
   }
 }

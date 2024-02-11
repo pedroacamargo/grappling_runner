@@ -9,6 +9,6 @@
 
 void DrawToggleGUI(GUI *interface, Screen screen, Font font, Vector2 mousePosition);
 
-void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMargin, GUI *interface);
+void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMargin, GUI *interface, float buttonHeight);
 
 void AnimateToggleGUI(GUI *interface, Screen screen);

@@ -1,13 +1,13 @@
 #include "../includes/input.hpp"
 
-void MoveAxisWithMouse(Camera2D *camera) {
+void MoveAxisWithMouse(Camera2D *camera, GUI *interface) {
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {   
-        SetMouseCursor(2);
-        Vector2 delta = GetMouseDelta();
-        delta = Vector2Scale(delta, -1.0f/ (*camera).zoom);
+      interface->mouseState = 3;
+      Vector2 delta = GetMouseDelta();
+      delta = Vector2Scale(delta, -1.0f/ (*camera).zoom);
 
-        (*camera).target = Vector2Add((*camera).target, delta);
+      (*camera).target = Vector2Add((*camera).target, delta);
     } 
 }
 
@@ -23,8 +23,8 @@ void ZoomAxisWithMouseWheel(Camera2D *camera) {
     }
 }
 
-void getGameInput(Camera2D *camera, int *actualCamera, Modes *mode) {
-    MoveAxisWithMouse(camera);
+void getGameInput(Camera2D *camera, int *actualCamera, Modes *mode, GUI *interface) {
+    MoveAxisWithMouse(camera, interface);
     ZoomAxisWithMouseWheel(camera);
 
     if (IsKeyPressed(KEY_Q)) {

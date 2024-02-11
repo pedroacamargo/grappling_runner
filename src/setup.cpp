@@ -41,5 +41,8 @@ GUI setupGUI(int width, Screen screen) {
     };
     newGUI.toggleButton.size = { 50.0f, 100.0f };
     newGUI.toggleButton.position = { newGUI.position.x - newGUI.toggleButton.size.width/2, screen.screenHeight / 2 - newGUI.toggleButton.size.height/2 };
+
+    // mouse state default
+    newGUI.mouseState = 1;
     return newGUI;
 }
