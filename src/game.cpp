@@ -43,10 +43,16 @@ int main(void) {
   EditModeGUI editModeInterface = setupEditModeGUI(screen);
   EditMode editMode;
   editMode.editModeState = EDIT_MODE_STATE_CREATE;
-  editMode.selectedBlock = -1;
+  editMode.selectionBox.selectedBlocks = {};
   editMode.blockList = blockList;
   editMode.editModeInterface = editModeInterface;
-  
+  editMode.selectionBox.position = { 0, 0 };
+  editMode.selectionBox.size = { 0, 0 };
+  editMode.selectionBox.origin = { 0, 0 };
+  editMode.selectionBox.direction = { 0, 0 };
+  editMode.selectionBox.selectedBlocks = {};
+  editMode.selectionBox.rec = { 0, 0, 0, 0 };
+  editMode.blockIdsNumber = 0;
 
   /**
    * @def Mouse Position
@@ -82,7 +88,7 @@ int main(void) {
 
           DrawEngineGrid2D(1000, 50, screen, &camera, mousePosition, &interface);
           DrawPlayCameraSilhouette(cameraPlay, screen);
-          editModeHandler(&modes, mousePositionWorld, mousePosition, interface, screen);
+          editModeHandler(&modes, mousePositionWorld, mousePosition, interface, screen, camera);
           drawRectangleList(modes.editMode.blockList);
 
         EndMode2D();

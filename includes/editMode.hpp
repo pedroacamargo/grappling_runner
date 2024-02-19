@@ -11,7 +11,7 @@ bool isEditModeOn(int *engine_mode);
 
 Rectangle createRectangle(Vector2 mouseWorldPosition);
 
-void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosition, GUI interface, Screen screen);
+void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosition, GUI interface, Screen screen, Camera2D camera);
 
 void drawRectangleList(std::vector<Block> blockList);
 

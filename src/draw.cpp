@@ -61,9 +61,11 @@ void DrawGUI(Camera2D camera, Vector2 mousePosition, GUI *interface, Screen scre
   Rectangle buttonAreaDefaultMouse = {interface->position.x, interface->position.y, buttonMargin, buttonHeight + (buttonMargin * 2)};
   Rectangle buttonAreaDefaultMouse2 = {interface->position.x, interface->position.y, interface->width, buttonMargin };
   Rectangle buttonAreaDefaultMouse3 = {interface->position.x, interface->position.y + interface->width - buttonMargin, buttonMargin, buttonHeight + (buttonMargin * 2)};
+
   bool isMouseInContainer = CheckCollisionPointRec(mousePosition, containerAreaDefaultMouse) || CheckCollisionPointRec(mousePosition, buttonAreaDefaultMouse) || CheckCollisionPointRec(mousePosition, buttonAreaDefaultMouse2) || CheckCollisionPointRec(mousePosition, buttonAreaDefaultMouse3);
+
   if (isMouseInContainer && !IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
-    interface->mouseState = 1;
+    interface->mouseState = CURSOR_DEFAULT;
   }
 }
 

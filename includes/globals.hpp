@@ -1,13 +1,25 @@
 #pragma once
 #include "raylib.h"
 #include <vector>
+
+// Engine modes
 #define DEBUG_MODE 0
 #define NORMAL_MODE 1
 #define EDIT_MODE 2
+
+// Edit mode states
 #define EDIT_MODE_STATE_SELECT 0
 #define EDIT_MODE_STATE_CREATE 1
 #define EDIT_MODE_STATE_MOVE 2
 #define EDIT_MODE_STATE_SCALE 3
+
+// Number of buttons in the edit mode interface
+#define BUTTONS_NUMBER 4
+
+// GUI cursor states
+#define CURSOR_DEFAULT 1
+#define CURSOR_CROSSHAIR 3
+
 
 typedef struct size {
     float width;
@@ -47,13 +59,24 @@ typedef struct editmode_gui {
     Size size;
 } EditModeGUI;
 
+typedef struct selectionBox {
+    Vector2 origin;
+    Vector2 position;
+    Vector2 direction;
+    Size size;
+
+    // pointer to the selected blocks
+    std::vector<Block> selectedBlocks;
+
+    Rectangle rec;
+} SelectionBox;
+
 typedef struct editmode {
     int editModeState;
-
-    int selectedBlock;
-
+    int blockIdsNumber;
     std::vector<Block> blockList;
     EditModeGUI editModeInterface;
+    SelectionBox selectionBox;
 } EditMode;
 
 typedef struct modes {

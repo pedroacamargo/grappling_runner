@@ -3,7 +3,7 @@
 void MoveAxisWithMouse(Camera2D *camera, GUI *interface) {
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {   
-      interface->mouseState = 3;
+      interface->mouseState = CURSOR_CROSSHAIR;
       Vector2 delta = GetMouseDelta();
       delta = Vector2Scale(delta, -1.0f/ (*camera).zoom);
 
@@ -42,8 +42,16 @@ void getGameInput(Camera2D *camera, int *actualCamera, Modes *mode, GUI *interfa
     // Delete the selected block if in edit mode
     if (mode->engine_mode == EDIT_MODE 
     && mode->editMode.editModeState == EDIT_MODE_STATE_SELECT 
-    && IsKeyPressed(KEY_DELETE) && mode->editMode.selectedBlock != -1) {
-        mode->editMode.blockList.erase(mode->editMode.blockList.begin() + mode->editMode.selectedBlock);
-        mode->editMode.selectedBlock = -1;
+    && IsKeyPressed(KEY_DELETE) && mode->editMode.selectionBox.selectedBlocks.size() != 0) {
+      
+      for (const auto &block : mode->editMode.selectionBox.selectedBlocks) {
+        for (auto i = 0; i < mode->editMode.blockList.size(); i++) {
+          if (mode->editMode.blockList[i].id == block.id) {
+            mode->editMode.blockList.erase(mode->editMode.blockList.begin() + i);
+          }
+        }
+      }
+
+      mode->editMode.selectionBox.selectedBlocks = {};
     }
 }

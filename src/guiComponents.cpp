@@ -36,7 +36,7 @@ void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMarg
   Rectangle button_CreateRectangle = { positionButtonOne.x, positionButtonOne.y, (*interface).width - buttonMargin, buttonHeight };
 
   if (CheckCollisionPointRec(mousePosition,button_CreateRectangle)) {
-    SetMouseCursor(4);
+    interface->mouseState = 4;
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
       DrawRectangleRec(button_CreateRectangle,WHITE);
       DrawText("Create a Rectangle",button_CreateRectangle.x + (button_CreateRectangle.width / 2) - 100.0f , button_CreateRectangle.y + (button_CreateRectangle.height / 2) - 10.0f , 20.0f,BLACK);
@@ -54,7 +54,7 @@ void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMarg
 
 void AnimateToggleGUI(GUI *interface, Screen screen) {
   if (!interface->isOpened && interface->position.x > screen.screenWidth - interface->width && interface->position.x < screen.screenWidth ) {
-    interface->position.x += (interface->width * 2) * GetFrameTime(); // toggle GUI in 1/2 second
+    interface->position.x += (interface->width) * GetFrameTime(); // toggle GUI in 1/2 second
 
     // Prevent GUI from going off screen
     if (interface->position.x >= screen.screenWidth) {
@@ -64,7 +64,7 @@ void AnimateToggleGUI(GUI *interface, Screen screen) {
   }
 
   if (interface->isOpened && interface->position.x > screen.screenWidth - interface->width + 1 && interface->position.x <= screen.screenWidth) {
-    interface->position.x -= (interface->width * 2) * GetFrameTime(); // toggle GUI in 1/2 second
+    interface->position.x -= (interface->width) * GetFrameTime(); // toggle GUI in 1/2 second
 
     // Prevent GUI from going off screen
     if (interface->position.x < screen.screenWidth - interface->width) {
