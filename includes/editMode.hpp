@@ -17,6 +17,6 @@ void drawRectangleList(std::vector<Block> blockList);
 
 EditModeGUI setupEditModeGUI(Screen screen);
 
-void drawEditModeGUI(Screen screen, Modes *modes);
+void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Vector2 mousePosition);
 
 void drawEditModeSelectButton(Screen screen, Modes *modes, int btnNumber, float size);

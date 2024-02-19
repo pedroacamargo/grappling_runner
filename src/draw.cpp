@@ -12,9 +12,9 @@ void DrawDebugBoard(Camera2D camera) {
 }
 
 void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *camera, Vector2 mousePosition, GUI *interface) {
-    int centerWidth = screen.screenWidth/2;
+    // int centerWidth = screen.screenWidth/2;
     int centerHeight = screen.screenHeight/2;
-    Rectangle gridRec = { 0, 0, interface->position.x - interface->toggleButton.size.width/2, screen.screenHeight };
+    Rectangle gridRec = { 0, 0, interface->position.x - interface->toggleButton.size.width/2, (float) screen.screenHeight };
     Rectangle gridRec2 = { interface->position.x - interface->toggleButton.size.width/2, 0, interface->toggleButton.size.width/2, screen.screenHeight - interface->toggleButton.position.y - interface->toggleButton.size.height };
     Rectangle gridRec3 = { interface->position.x - interface->toggleButton.size.width/2, interface->toggleButton.position.y + interface->toggleButton.size.height, interface->toggleButton.size.width/2, screen.screenHeight - interface->toggleButton.position.y - interface->toggleButton.size.height };
 
@@ -27,7 +27,8 @@ void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *ca
 
     // Check if mouse is not pressed when moving the camera, so it doesn't trigger the cursor change
     bool isMouseInGrid = CheckCollisionPointRec(mousePosition, gridRec) || CheckCollisionPointRec(mousePosition, gridRec2) || CheckCollisionPointRec(mousePosition, gridRec3);
-    if (isMouseInGrid && !IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+
+    if (isMouseInGrid && !IsMouseButtonDown(GRID_MOVEMENT_CONTROL_CURSOR)) {
       interface->mouseState = 1;
     }
 }
@@ -38,7 +39,7 @@ void DrawGUI(Camera2D camera, Vector2 mousePosition, GUI *interface, Screen scre
   */
   float buttonMargin = 10.0f;
   float buttonHeight = 50;
-  float screenWidth = screen.screenWidth;
+  // float screenWidth = screen.screenWidth;
   float screenHeight = screen.screenHeight;
   int buttonNumber = 1; // !IMPORTANT
 
@@ -64,7 +65,7 @@ void DrawGUI(Camera2D camera, Vector2 mousePosition, GUI *interface, Screen scre
 
   bool isMouseInContainer = CheckCollisionPointRec(mousePosition, containerAreaDefaultMouse) || CheckCollisionPointRec(mousePosition, buttonAreaDefaultMouse) || CheckCollisionPointRec(mousePosition, buttonAreaDefaultMouse2) || CheckCollisionPointRec(mousePosition, buttonAreaDefaultMouse3);
 
-  if (isMouseInContainer && !IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+  if (isMouseInContainer && !IsMouseButtonDown(GRID_MOVEMENT_CONTROL_CURSOR)) {
     interface->mouseState = CURSOR_DEFAULT;
   }
 }

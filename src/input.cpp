@@ -1,7 +1,7 @@
 #include "../includes/input.hpp"
 
 void MoveAxisWithMouse(Camera2D *camera, GUI *interface) {
-    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+    if (IsMouseButtonDown(GRID_MOVEMENT_CONTROL_CURSOR))
     {   
       interface->mouseState = CURSOR_CROSSHAIR;
       Vector2 delta = GetMouseDelta();
@@ -45,13 +45,13 @@ void getGameInput(Camera2D *camera, int *actualCamera, Modes *mode, GUI *interfa
     && IsKeyPressed(KEY_DELETE) && mode->editMode.selectionBox.selectedBlocks.size() != 0) {
       
       for (const auto &block : mode->editMode.selectionBox.selectedBlocks) {
-        for (auto i = 0; i < mode->editMode.blockList.size(); i++) {
+        for (auto i = 0; i < (int) mode->editMode.blockList.size(); i++) {
           if (mode->editMode.blockList[i].id == block.id) {
             mode->editMode.blockList.erase(mode->editMode.blockList.begin() + i);
           }
         }
       }
 
-      mode->editMode.selectionBox.selectedBlocks = {};
+      mode->editMode.selectionBox.selectedBlocks.clear();
     }
 }

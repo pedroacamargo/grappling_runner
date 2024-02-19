@@ -53,6 +53,7 @@ int main(void) {
   editMode.selectionBox.selectedBlocks = {};
   editMode.selectionBox.rec = { 0, 0, 0, 0 };
   editMode.blockIdsNumber = 0;
+  editMode.moveSelectedBlock = nullptr;
 
   /**
    * @def Mouse Position
@@ -94,7 +95,7 @@ int main(void) {
         EndMode2D();
 
         DrawGUI(camera,mousePosition,&interface,screen,defaultFont,&modes.engine_mode);
-        drawEditModeGUI(screen, &modes);
+        drawEditModeGUI(screen, &modes, interface, mousePosition);
 
         // Debug block code
         if (modes.engine_mode == DEBUG_MODE) {

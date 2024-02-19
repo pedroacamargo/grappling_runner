@@ -3,15 +3,23 @@
 #include <vector>
 
 // Engine modes
-#define DEBUG_MODE 0
-#define NORMAL_MODE 1
-#define EDIT_MODE 2
+typedef enum {
+    DEBUG_MODE = 0,
+    NORMAL_MODE = 1,
+    EDIT_MODE = 2
+} EngineModes;
 
 // Edit mode states
-#define EDIT_MODE_STATE_SELECT 0
-#define EDIT_MODE_STATE_CREATE 1
-#define EDIT_MODE_STATE_MOVE 2
-#define EDIT_MODE_STATE_SCALE 3
+typedef enum {
+    EDIT_MODE_STATE_SELECT = 0,
+    EDIT_MODE_STATE_CREATE = 1,
+    EDIT_MODE_STATE_MOVE = 2,
+    EDIT_MODE_STATE_SCALE = 3
+} EditModeState;
+
+typedef enum {
+    EDIT_MODE_INSPECT_MENU_HEIGHT = 300,
+} EditModeMenuGUI;
 
 // Number of buttons in the edit mode interface
 #define BUTTONS_NUMBER 4
@@ -19,6 +27,10 @@
 // GUI cursor states
 #define CURSOR_DEFAULT 1
 #define CURSOR_CROSSHAIR 3
+
+// Game controls
+#define GRID_MOVEMENT_CONTROL_CURSOR MOUSE_BUTTON_MIDDLE
+
 
 
 typedef struct size {
@@ -77,6 +89,7 @@ typedef struct editmode {
     std::vector<Block> blockList;
     EditModeGUI editModeInterface;
     SelectionBox selectionBox;
+    Block *moveSelectedBlock;
 } EditMode;
 
 typedef struct modes {

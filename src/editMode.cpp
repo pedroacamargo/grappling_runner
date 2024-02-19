@@ -25,7 +25,7 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
     
 
 
-    if (isEditModeOn(&(mode->engine_mode)) 
+    if ((mode->engine_mode == EDIT_MODE) 
     &&  !overwriteGUI) {
 
         // --------------------------------------------------------------------
@@ -46,8 +46,11 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
             
         }
 
+
         // --------------------------------------------------------------------
 
+        // First click to select the blocks and start the selection box
+        // Once released, select the blocks inside the selection box
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SELECT) {
             mode->editMode.selectionBox.selectedBlocks = {};
             mode->editMode.selectionBox.position = mouseWorldPosition;
@@ -128,8 +131,49 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
             }
         }
 
+
         // --------------------------------------------------------------------
 
+
+        // Handle the move mode
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_MOVE) {
+
+            if (mode->editMode.moveSelectedBlock != nullptr) {
+                mode->editMode.moveSelectedBlock->rec.x = mouseWorldPosition.x - mode->editMode.moveSelectedBlock->rec.width/2;
+                mode->editMode.moveSelectedBlock->rec.y = mouseWorldPosition.y - mode->editMode.moveSelectedBlock->rec.height/2;
+            } else {
+                for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
+                    if (CheckCollisionPointRec(mouseWorldPosition, mode->editMode.blockList[i].rec)) {
+                        mode->editMode.blockList[i].color = GREEN;
+
+                        mode->editMode.moveSelectedBlock = &mode->editMode.blockList[i];
+                    }
+                }
+            }
+
+        } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_MOVE) {
+            for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
+                mode->editMode.blockList[i].color = RED;
+            }
+            mode->editMode.moveSelectedBlock = nullptr;
+        }
+
+
+        // --------------------------------------------------------------------
+
+    } 
+    
+    if (mode->engine_mode != EDIT_MODE) {
+        // Reset the colors of the blocks
+        // TODO: Improve this code
+        for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
+            mode->editMode.blockList[i].color = RED;
+            mode->editMode.selectionBox.selectedBlocks = {};
+            mode->editMode.selectionBox.size = { 0, 0 };
+            mode->editMode.selectionBox.origin = { 0, 0 };
+            mode->editMode.selectionBox.position = { 0, 0 };
+            mode->editMode.selectionBox.direction = { 0, 0 };
+        }
     }
 }
 
@@ -139,7 +183,7 @@ void drawRectangleList(std::vector<Block> blockList) {
         DrawRectangleRec(blockList[i].rec, blockList[i].color);
 
         // TODO: Write the text if in debug mode
-        DrawText(TextFormat("%i", blockList[i].id), blockList[i].rec.x + 20, blockList[i].rec.y + 20, 20, WHITE);
+        // DrawText(TextFormat("%i", blockList[i].id), blockList[i].rec.x + 20, blockList[i].rec.y + 20, 20, WHITE);
     }
 }
 
@@ -150,9 +194,54 @@ EditModeGUI setupEditModeGUI(Screen screen) {
     return editModeInterface;
 }
 
-void drawEditModeGUI(Screen screen, Modes *modes) {
+void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Vector2 mousePosition) {
     // Check if the engine is in edit mode
     if (modes->engine_mode != EDIT_MODE) return;
+
+    // Draw the inspection menu in the bottom of GUI
+    if (modes->editMode.selectionBox.selectedBlocks.size() >= 0 && modes->editMode.editModeState == EDIT_MODE_STATE_SELECT) {
+        DrawRectangle(interface.position.x, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT), interface.width, EDIT_MODE_INSPECT_MENU_HEIGHT, BLACK);
+
+        DrawText(TextFormat("Selected Blocks: %i", modes->editMode.selectionBox.selectedBlocks.size()), interface.position.x + 10, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 10, 20, WHITE);
+
+        if (modes->editMode.selectionBox.selectedBlocks.size() == 1) {
+
+            // TODO: Improve this code by creating a function to get the selected block
+            Block *selectedBlock = nullptr;
+            for (int i = 0; i < (int) modes->editMode.blockList.size(); i++) {
+                if (modes->editMode.blockList[i].id == modes->editMode.selectionBox.selectedBlocks[0].id) {
+                    selectedBlock = &modes->editMode.blockList[i];
+                }
+            }
+
+            DrawText(TextFormat("Block ID: %i", selectedBlock->id), interface.position.x + 10, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 30, 20, WHITE);
+
+            Rectangle recX = { interface.position.x + 50, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 57.5, interface.width - 60, 32 };
+            DrawRectangleRec(recX, GRAY);
+            DrawText(TextFormat("X: %.2f", selectedBlock->rec.x), interface.position.x + 20, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 60, 30, WHITE);
+
+            Rectangle recY = { interface.position.x + 50, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 97.5, interface.width - 60, 32 };
+            DrawRectangleRec(recY, GRAY);
+            DrawText(TextFormat("Y: %.2f", selectedBlock->rec.y), interface.position.x + 20, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 100, 30, WHITE);
+
+            // handle the move mode
+            Vector2 delta = GetMouseDelta();
+            if (CheckCollisionPointRec(mousePosition,recX)) {
+                if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                    selectedBlock->rec.x += delta.x;
+                } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+                    selectedBlock->rec.x += delta.x/4;
+                }
+            } else if (CheckCollisionPointRec(mousePosition,recY)) {
+                if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                    selectedBlock->rec.y += delta.x;
+                } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+                    selectedBlock->rec.y += delta.x/4;
+                }
+            }
+
+        }
+    }
 
     // Draw the edit mode select button
     for (int i = 0; i < BUTTONS_NUMBER; i++) {
@@ -194,6 +283,17 @@ void drawEditModeSelectButton(Screen screen, Modes *modes, int btnNumber, float 
         DrawRectangleLinesEx(buttonContainer, 2.0f, WHITE);
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
             modes->editMode.editModeState = btnNumber;
+
+            // reset everything
+            // TODO: Improve this code
+            modes->editMode.selectionBox.selectedBlocks = {};
+            modes->editMode.selectionBox.size = { 0, 0 };
+            modes->editMode.selectionBox.origin = { 0, 0 };
+            modes->editMode.selectionBox.position = { 0, 0 };
+            modes->editMode.selectionBox.direction = { 0, 0 };
+            for (int i = 0; i < (int) modes->editMode.blockList.size(); i++) {
+                modes->editMode.blockList[i].color = RED;
+            }
         }
     }
 }
