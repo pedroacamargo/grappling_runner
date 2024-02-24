@@ -11,7 +11,7 @@ void DrawDebugBoard(Camera2D camera) {
   DrawText(TextFormat("FPS: %d", GetFPS()),10,110,20, RED);
 }
 
-void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *camera, Vector2 mousePosition, GUI *interface) {
+void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *camera, Vector2 mousePosition, GUI *interface, Modes mode) {
     // int centerWidth = screen.screenWidth/2;
     int centerHeight = screen.screenHeight/2;
     Rectangle gridRec = { 0, 0, interface->position.x - interface->toggleButton.size.width/2, (float) screen.screenHeight };
@@ -29,7 +29,7 @@ void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *ca
     bool isMouseInGrid = CheckCollisionPointRec(mousePosition, gridRec) || CheckCollisionPointRec(mousePosition, gridRec2) || CheckCollisionPointRec(mousePosition, gridRec3);
 
     if (isMouseInGrid && !IsMouseButtonDown(GRID_MOVEMENT_CONTROL_CURSOR)) {
-      interface->mouseState = 1;
+      interface->mouseState = CURSOR_DEFAULT;
     }
 }
 

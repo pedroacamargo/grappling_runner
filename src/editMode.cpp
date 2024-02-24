@@ -160,7 +160,73 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
 
 
         // --------------------------------------------------------------------
+        int arrowMargin = 5;
+        Texture2D *arrowTexture = mode->editMode.textures.arrowTexture;
+        Rectangle *rec = &mode->editMode.scaleSelectedBlock->rec;
+        bool isMouseOverArrow = false;
+        
+        if (rec != nullptr) {
+            Rectangle arrowHitboxes[] = {
+                { rec->x + rec->width/2 - arrowTexture->width/2, rec->y - arrowTexture->height - arrowMargin,(float) arrowTexture->width, (float) arrowTexture->height }, // up
+                { rec->x + rec->width/2 - arrowTexture->width/2, rec->y + rec->height + arrowTexture->height/3 - arrowMargin,(float) arrowTexture->width, (float) arrowTexture->height }, // down
+                { rec->x - arrowTexture->width - arrowMargin, rec->y + rec->height/2 - arrowTexture->height/2,(float) arrowTexture->width, (float) arrowTexture->height }, // left
+                { rec->x + rec->width + arrowTexture->width/3 - arrowMargin, rec->y + rec->height/2 - arrowTexture->height/2, (float) arrowTexture->width, (float) arrowTexture->height } // right
+            };
 
+            // TODO: Handle debug mode in a better way
+            // if (mode->engine_mode == EDIT_MODE) {
+            //     for (int i = 0; i < 4; i++) {
+            //         DrawRectangleRec(arrowHitboxes[i], RED);
+            //     }
+            // }
+
+
+            // TODO: Improve this code
+            isMouseOverArrow = CheckCollisionPointRec(mouseWorldPosition, arrowHitboxes[0]) ||
+                                    CheckCollisionPointRec(mouseWorldPosition, arrowHitboxes[1]) ||
+                                    CheckCollisionPointRec(mouseWorldPosition, arrowHitboxes[2]) ||
+                                    CheckCollisionPointRec(mouseWorldPosition, arrowHitboxes[3]);
+        }
+
+        // TODO: Handle the cursor in a better way
+        // if (isMouseOverArrow && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
+        //     interface.mouseState = CURSOR_POINTING;
+        // } else if (mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
+        //     interface.mouseState = CURSOR_DEFAULT;
+        // }
+
+        // Handle the scale mode
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
+            if (mode->editMode.scaleSelectedBlock != nullptr && !isMouseOverArrow) {
+                mode->editMode.scaleSelectedBlock->color = RED;
+                mode->editMode.scaleSelectedBlock = nullptr;
+            }
+
+            for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
+                if (CheckCollisionPointRec(mouseWorldPosition, mode->editMode.blockList[i].rec)) {
+                    mode->editMode.scaleSelectedBlock = &mode->editMode.blockList[i];
+                    mode->editMode.blockList[i].color = GREEN;
+                } 
+            }
+        }
+
+        if (rec != nullptr) {
+
+            Vector2 positions[] = {
+                { rec->x + rec->width/2 - arrowTexture->width/2, rec->y - arrowTexture->height/3 + arrowMargin }, // up
+                { rec->x + rec->width/2 + arrowTexture->width/2, rec->y + rec->height + arrowTexture->height/3 - arrowMargin }, // down
+                { rec->x - arrowTexture->width/3 + arrowMargin, rec->y + rec->height/2 + arrowTexture->height/2 }, // left
+                { rec->x + rec->width + arrowTexture->width/3 - arrowMargin, rec->y + rec->height/2 - arrowTexture->height/2 } // right
+            };
+
+            int rotations[4] = { -90, 90, 180, 0 };
+            int i = 0;
+
+            for (Vector2 blockPosition : positions) {
+                DrawTextureEx(*arrowTexture, blockPosition, rotations[i++], 1, WHITE);            
+            }
+
+        }
     } 
     
     if (mode->engine_mode != EDIT_MODE) {
@@ -216,11 +282,13 @@ void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Vector2 mousePo
 
             DrawText(TextFormat("Block ID: %i", selectedBlock->id), interface.position.x + 10, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 30, 20, WHITE);
 
-            Rectangle recX = { interface.position.x + 50, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 57.5, interface.width - 60, 32 };
+            float posY = interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 57.5; // avoid narrowing conversion warning
+            Rectangle recX = { interface.position.x + 50, posY, interface.width - 60, 32 };
             DrawRectangleRec(recX, GRAY);
             DrawText(TextFormat("X: %.2f", selectedBlock->rec.x), interface.position.x + 20, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 60, 30, WHITE);
 
-            Rectangle recY = { interface.position.x + 50, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 97.5, interface.width - 60, 32 };
+            float posY2 = interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 87.5; // avoid narrowing conversion warning
+            Rectangle recY = { interface.position.x + 50, posY2, interface.width - 60, 32 };
             DrawRectangleRec(recY, GRAY);
             DrawText(TextFormat("Y: %.2f", selectedBlock->rec.y), interface.position.x + 20, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 100, 30, WHITE);
 

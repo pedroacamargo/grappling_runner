@@ -11,6 +11,13 @@
 int main(void) {
   Screen screen = setupWindow(1920,1080,true);
 
+  // --------------------------------------------------------------------------------------------------------------------> Textures
+  Texture2D arrowTexture = LoadTexture("resources/grayArrow.png");
+  
+
+
+  // --------------------------------------------------------------------------------------------------------------------> Variables
+
   /**
    * @def Cameras Setup
    * @param camera -  Development camera
@@ -54,6 +61,8 @@ int main(void) {
   editMode.selectionBox.rec = { 0, 0, 0, 0 };
   editMode.blockIdsNumber = 0;
   editMode.moveSelectedBlock = nullptr;
+  editMode.scaleSelectedBlock = nullptr;
+  editMode.textures.arrowTexture = &arrowTexture; // Arrow texture when moving
 
   /**
    * @def Mouse Position
@@ -87,7 +96,7 @@ int main(void) {
         
         BeginMode2D(camera);
 
-          DrawEngineGrid2D(1000, 50, screen, &camera, mousePosition, &interface);
+          DrawEngineGrid2D(1000, 50, screen, &camera, mousePosition, &interface, modes);
           DrawPlayCameraSilhouette(cameraPlay, screen);
           editModeHandler(&modes, mousePositionWorld, mousePosition, interface, screen, camera);
           drawRectangleList(modes.editMode.blockList);
@@ -117,7 +126,7 @@ int main(void) {
 
           // Debug block code
           if (modes.engine_mode == DEBUG_MODE) {
-            DrawEngineGrid2D(1000, 50, screen, &cameraPlay, mousePosition, &interface);
+            DrawEngineGrid2D(1000, 50, screen, &cameraPlay, mousePosition, &interface, modes);
           }
 
           drawRectangleList(modes.editMode.blockList);
@@ -149,6 +158,7 @@ int main(void) {
   }
 
   CloseWindow();
+  UnloadTexture(arrowTexture);
 
   return 0;
 }

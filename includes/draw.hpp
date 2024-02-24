@@ -21,8 +21,9 @@ void DrawDebugBoard(Camera2D camera);
  * @param camera The camera to be used
  * @param mousePosition The mouse position
  * @param interface The GUI interface
+ * @param engine_mode The engine mode
 */
-void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *camera, Vector2 mousePosition, GUI *interface);
+void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *camera, Vector2 mousePosition, GUI *interface, Modes mode);
 
 
 /**
