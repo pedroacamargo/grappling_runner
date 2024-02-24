@@ -32,7 +32,7 @@ void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font
   DrawToggleGUI(interface, screen, font, cursor.screenPosition);
 
   // Draw GUI container
-  Rectangle container = {(*interface).position.x, (*interface).position.y, (*interface).width, screen.screenHeight};
+  Rectangle container = {(*interface).position.x, (*interface).position.y, (*interface).width, (float) screen.screenHeight};
   DrawRectangleRec(container, (*interface).GUI_color);
   
   // Draw First Button

@@ -13,15 +13,15 @@ Rectangle createRectangle(Vector2 mouseWorldPosition) {
     return rec;
 }
 
-void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosition, GUI interface, Screen screen, Camera2D camera, Cursor *cursor) {
+void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera, Cursor *cursor) {
 
     // Check if the mouse is over the GUI
     bool overwriteGUI = 
-        CheckCollisionPointRec(mousePosition, {interface.position.x, interface.position.y, interface.width, (float) screen.screenHeight }) 
+        CheckCollisionPointRec(cursor->screenPosition, {interface.position.x, interface.position.y, interface.width, (float) screen.screenHeight }) 
         || 
-        CheckCollisionPointRec(mousePosition, {interface.toggleButton.position.x, interface.toggleButton.position.y, interface.toggleButton.size.width, interface.toggleButton.size.height })
+        CheckCollisionPointRec(cursor->screenPosition, {interface.toggleButton.position.x, interface.toggleButton.position.y, interface.toggleButton.size.width, interface.toggleButton.size.height })
         ||
-        CheckCollisionPointRec(mousePosition, { mode->editMode.editModeInterface.position.x, mode->editMode.editModeInterface.position.y, mode->editMode.editModeInterface.size.width, mode->editMode.editModeInterface.size.height });
+        CheckCollisionPointRec(cursor->screenPosition, { mode->editMode.editModeInterface.position.x, mode->editMode.editModeInterface.position.y, mode->editMode.editModeInterface.size.width, mode->editMode.editModeInterface.size.height });
     
 
 
@@ -35,7 +35,7 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
         &&  mode->editMode.editModeState == EDIT_MODE_STATE_CREATE) {
 
             Block newBlock;
-            newBlock.rec = createRectangle(mouseWorldPosition);
+            newBlock.rec = createRectangle(cursor->worldPosition);
             newBlock.color = RED;
             
             newBlock.id = mode->editMode.blockIdsNumber;
@@ -53,9 +53,9 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
         // Once released, select the blocks inside the selection box
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SELECT) {
             mode->editMode.selectionBox.selectedBlocks = {};
-            mode->editMode.selectionBox.position = mouseWorldPosition;
-            mode->editMode.selectionBox.origin = mouseWorldPosition;
-            // TraceLog(LOG_INFO, "Mouse Position: %f, %f", mouseWorldPosition.x, mouseWorldPosition.y);
+            mode->editMode.selectionBox.position = cursor->worldPosition;
+            mode->editMode.selectionBox.origin = cursor->worldPosition;
+            // TraceLog(LOG_INFO, "Mouse Position: %f, %f", cursor->worldPosition.x, cursor->worldPosition.y);
         } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SELECT) {
 
             // Select the blocks inside the selection box after releasing the mouse button
@@ -75,11 +75,11 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)
         &&  mode->editMode.editModeState == EDIT_MODE_STATE_SELECT) {
 
-            mode->editMode.selectionBox.position = mouseWorldPosition;
+            mode->editMode.selectionBox.position = cursor->worldPosition;
 
             // TODO: Improve this code
             if (mode->editMode.selectionBox.origin.x > mode->editMode.selectionBox.position.x) {
-                mode->editMode.selectionBox.position.x = mouseWorldPosition.x;
+                mode->editMode.selectionBox.position.x = cursor->worldPosition.x;
                 mode->editMode.selectionBox.size.width = abs(mode->editMode.selectionBox.position.x - mode->editMode.selectionBox.origin.x);
                 mode->editMode.selectionBox.direction.x = -1.0f;
 
@@ -89,7 +89,7 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
             }
 
             if (mode->editMode.selectionBox.origin.y > mode->editMode.selectionBox.position.y) {
-                mode->editMode.selectionBox.position.y = mouseWorldPosition.y;
+                mode->editMode.selectionBox.position.y = cursor->worldPosition.y;
                 mode->editMode.selectionBox.size.height = abs(mode->editMode.selectionBox.position.y - mode->editMode.selectionBox.origin.y);
                 mode->editMode.selectionBox.direction.y = -1.0f;
             } else {
@@ -139,11 +139,11 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_MOVE) {
 
             if (mode->editMode.moveSelectedBlock != nullptr) {
-                mode->editMode.moveSelectedBlock->rec.x = mouseWorldPosition.x - mode->editMode.moveSelectedBlock->rec.width/2;
-                mode->editMode.moveSelectedBlock->rec.y = mouseWorldPosition.y - mode->editMode.moveSelectedBlock->rec.height/2;
+                mode->editMode.moveSelectedBlock->rec.x = cursor->worldPosition.x - mode->editMode.moveSelectedBlock->rec.width/2;
+                mode->editMode.moveSelectedBlock->rec.y = cursor->worldPosition.y - mode->editMode.moveSelectedBlock->rec.height/2;
             } else {
                 for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
-                    if (CheckCollisionPointRec(mouseWorldPosition, mode->editMode.blockList[i].rec)) {
+                    if (CheckCollisionPointRec(cursor->worldPosition, mode->editMode.blockList[i].rec)) {
                         mode->editMode.blockList[i].color = GREEN;
 
                         mode->editMode.moveSelectedBlock = &mode->editMode.blockList[i];
@@ -165,6 +165,7 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
         Rectangle *rec = &mode->editMode.scaleMode.scaleSelectedBlock->rec;
         IsMouseOverBlockScaleArrows isMouseOverArrow = isMouseOverBlockScaleArrows(mode, cursor);
 
+        // check if the mouse is over the arrows and if the left mouse button is pressed
         if (isMouseOverArrow.isOver && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
             mode->editMode.scaleMode.isScaling = isMouseOverArrow.arrow;
         } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
@@ -173,6 +174,7 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
 
         Vector2 delta = GetMouseDelta();
 
+        // handle scale mode on each arrow
         if (mode->editMode.scaleMode.isScaling != -1) {
             if (mode->editMode.scaleMode.isScaling == EDIT_MODE_SCALE_ARROW_TOP) {
                 if (mode->editMode.scaleMode.flag != SCALE_MODE_FLAG_STOP_SCALING) {
@@ -192,71 +194,112 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
                 }
 
             } else if (mode->editMode.scaleMode.isScaling == EDIT_MODE_SCALE_ARROW_BOTTOM) {
-                mode->editMode.scaleMode.scaleSelectedBlock->rec.height += 1;
+                
+                if (mode->editMode.scaleMode.flag != SCALE_MODE_FLAG_STOP_SCALING) {
+                    rec->height += delta.y;
+                } else {
+                    if (delta.y > 0) {
+                        rec->height += delta.y;
+                    }
+                }
+
+                if (rec->height < MINIMUM_BLOCK_SIZE) {
+                    mode->editMode.scaleMode.flag = SCALE_MODE_FLAG_STOP_SCALING;
+                } else {
+                    mode->editMode.scaleMode.flag = 0;
+                }
+
             } else if (mode->editMode.scaleMode.isScaling == EDIT_MODE_SCALE_ARROW_LEFT) {
-                mode->editMode.scaleMode.scaleSelectedBlock->rec.x -= 1;
-                mode->editMode.scaleMode.scaleSelectedBlock->rec.width += 1;
+
+                // mode->editMode.scaleMode.scaleSelectedBlock->rec.x -= 1;
+                // mode->editMode.scaleMode.scaleSelectedBlock->rec.width += 1;
+
+                if (mode->editMode.scaleMode.flag != SCALE_MODE_FLAG_STOP_SCALING) {
+                    rec->x += delta.x;
+                    rec->width += -delta.x;
+                } else {
+                    if (delta.x < 0) {
+                        rec->x += delta.x;
+                        rec->width += -delta.x;
+                    }
+                }
+
+                if (rec->width < MINIMUM_BLOCK_SIZE) {
+                    mode->editMode.scaleMode.flag = SCALE_MODE_FLAG_STOP_SCALING;
+                } else {
+                    mode->editMode.scaleMode.flag = 0;
+                }
+
             } else if (mode->editMode.scaleMode.isScaling == EDIT_MODE_SCALE_ARROW_RIGHT) {
-                mode->editMode.scaleMode.scaleSelectedBlock->rec.width += 1;
+
+                if (mode->editMode.scaleMode.flag != SCALE_MODE_FLAG_STOP_SCALING) {
+                    rec->width += delta.x;
+                } else {
+                    if (delta.x > 0) {
+                        rec->width += delta.x;
+                    }
+                }
+
+                if (rec->width < MINIMUM_BLOCK_SIZE) {
+                    mode->editMode.scaleMode.flag = SCALE_MODE_FLAG_STOP_SCALING;
+                } else {
+                    mode->editMode.scaleMode.flag = 0;
+                }
             }
         }
         
-        if (rec != nullptr) {
-            // Draw arrows around the block
-            // 0: up, 1: down, 2: left, 3: right
-            Vector2 positions[] = {
-                { rec->x + rec->width/2 - arrowTexture->width/2, rec->y - arrowTexture->height/3 + arrowMargin }, // up
-                { rec->x + rec->width/2 + arrowTexture->width/2, rec->y + rec->height + arrowTexture->height/3 - arrowMargin }, // down
-                { rec->x - arrowTexture->width/3 + arrowMargin, rec->y + rec->height/2 + arrowTexture->height/2 }, // left
-                { rec->x + rec->width + arrowTexture->width/3 - arrowMargin, rec->y + rec->height/2 - arrowTexture->height/2 } // right
-            };
-
-            int rotations[4] = { -90, 90, 180, 0 };
-            int i = 0;
-
-            for (Vector2 blockPosition : positions) {
-                DrawTextureEx(*arrowTexture, blockPosition, rotations[i++], 1, WHITE);            
-            }
-        }
-
-        // Handle the scale mode
+        // select the block to scale
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
             if (mode->editMode.scaleMode.scaleSelectedBlock != nullptr && !isMouseOverArrow.isOver && mode->editMode.scaleMode.isScaling == -1) {
                 mode->editMode.scaleMode.scaleSelectedBlock->color = RED;
                 mode->editMode.scaleMode.scaleSelectedBlock = nullptr;
             } 
 
-            for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
-                if (CheckCollisionPointRec(mouseWorldPosition, mode->editMode.blockList[i].rec)) {
-                    mode->editMode.scaleMode.scaleSelectedBlock = &mode->editMode.blockList[i];
-                    mode->editMode.blockList[i].color = GREEN;
-                } 
+            if (mode->editMode.scaleMode.scaleSelectedBlock == nullptr) {
+                for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
+                    if (CheckCollisionPointRec(cursor->worldPosition, mode->editMode.blockList[i].rec)) {
+                        mode->editMode.scaleMode.scaleSelectedBlock = &mode->editMode.blockList[i];
+                        mode->editMode.blockList[i].color = GREEN;
+                        break;
+                    } 
+                }
             }
         }
     } 
     
     if (mode->engine_mode != EDIT_MODE) {
-        // Reset the colors of the blocks
-        // TODO: Improve this code
-        for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
-            mode->editMode.blockList[i].color = RED;
-            mode->editMode.selectionBox.selectedBlocks = {};
-            mode->editMode.selectionBox.size = { 0, 0 };
-            mode->editMode.selectionBox.origin = { 0, 0 };
-            mode->editMode.selectionBox.position = { 0, 0 };
-            mode->editMode.selectionBox.direction = { 0, 0 };
-        }
+        resetEditMode(mode);
     }
 }
 
 
-void drawRectangleList(std::vector<Block> blockList) {
+void drawRectangleList(std::vector<Block> blockList, Modes *mode) {
     for (int i = 0; i < (int) blockList.size(); i++) {
         DrawRectangleRec(blockList[i].rec, blockList[i].color);
-
-        // TODO: Write the text if in debug mode
-        // DrawText(TextFormat("%i", blockList[i].id), blockList[i].rec.x + 20, blockList[i].rec.y + 20, 20, WHITE);
     }
+
+    int arrowMargin = 5;
+    Texture2D *arrowTexture = mode->editMode.textures.arrowTexture;
+    Rectangle *rec = &mode->editMode.scaleMode.scaleSelectedBlock->rec;
+    int rotations[4] = { -90, 90, 180, 0 };
+
+    if (rec != nullptr) {
+        // Draw arrows around the block
+        // 0: up, 1: down, 2: left, 3: right
+        Vector2 positions[] = {
+            { rec->x + rec->width/2 - arrowTexture->width/2, rec->y - arrowTexture->height/3 + arrowMargin }, // up
+            { rec->x + rec->width/2 + arrowTexture->width/2, rec->y + rec->height + arrowTexture->height/3 - arrowMargin }, // down
+            { rec->x - arrowTexture->width/3 + arrowMargin, rec->y + rec->height/2 + arrowTexture->height/2 }, // left
+            { rec->x + rec->width + arrowTexture->width/3 - arrowMargin, rec->y + rec->height/2 - arrowTexture->height/2 } // right
+        };
+
+        mode->editMode.scaleMode.positionArrows = positions;
+
+        for (int i = 0; i < 4; i++) {
+            DrawTextureEx(*arrowTexture, positions[i], rotations[i], 1, WHITE);            
+        }
+    }
+
 }
 
 EditModeGUI setupEditModeGUI(Screen screen) {
@@ -266,7 +309,7 @@ EditModeGUI setupEditModeGUI(Screen screen) {
     return editModeInterface;
 }
 
-void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Vector2 mousePosition) {
+void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Cursor *cursor) {
     // Check if the engine is in edit mode
     if (modes->engine_mode != EDIT_MODE) return;
 
@@ -300,13 +343,13 @@ void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Vector2 mousePo
 
             // handle the move mode
             Vector2 delta = GetMouseDelta();
-            if (CheckCollisionPointRec(mousePosition,recX)) {
+            if (CheckCollisionPointRec(cursor->screenPosition,recX)) {
                 if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
                     selectedBlock->rec.x += delta.x;
                 } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
                     selectedBlock->rec.x += delta.x/4;
                 }
-            } else if (CheckCollisionPointRec(mousePosition,recY)) {
+            } else if (CheckCollisionPointRec(cursor->screenPosition,recY)) {
                 if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
                     selectedBlock->rec.y += delta.x;
                 } else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
@@ -357,17 +400,23 @@ void drawEditModeSelectButton(Screen screen, Modes *modes, int btnNumber, float 
         DrawRectangleLinesEx(buttonContainer, 2.0f, WHITE);
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
             modes->editMode.editModeState = btnNumber;
-
-            // reset everything
-            // TODO: Improve this code
-            modes->editMode.selectionBox.selectedBlocks = {};
-            modes->editMode.selectionBox.size = { 0, 0 };
-            modes->editMode.selectionBox.origin = { 0, 0 };
-            modes->editMode.selectionBox.position = { 0, 0 };
-            modes->editMode.selectionBox.direction = { 0, 0 };
-            for (int i = 0; i < (int) modes->editMode.blockList.size(); i++) {
-                modes->editMode.blockList[i].color = RED;
-            }
+            resetEditMode(modes);
         }
     }
+}
+
+void resetEditMode(Modes * mode) {
+    for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
+        mode->editMode.blockList[i].color = RED;
+        mode->editMode.selectionBox.selectedBlocks = {};
+        mode->editMode.selectionBox.size = { 0, 0 };
+        mode->editMode.selectionBox.origin = { 0, 0 };
+        mode->editMode.selectionBox.position = { 0, 0 };
+        mode->editMode.selectionBox.direction = { 0, 0 };
+    }
+    mode->editMode.scaleMode.flag = -1;
+    mode->editMode.scaleMode.isScaling = -1;
+    mode->editMode.scaleMode.scaleSelectedBlock = nullptr;
+    mode->editMode.moveSelectedBlock = nullptr;
+    mode->editMode.scaleMode.positionArrows = nullptr;
 }

@@ -61,6 +61,7 @@ typedef struct scaleMode {
     int isScaling;
     int flag;
     Block *scaleSelectedBlock;
+    Vector2 *positionArrows;
 } ScaleMode;
 #define SCALE_MODE_FLAG_STOP_SCALING 1
 

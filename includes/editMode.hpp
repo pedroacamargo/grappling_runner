@@ -12,12 +12,14 @@ bool isEditModeOn(int *engine_mode);
 
 Rectangle createRectangle(Vector2 mouseWorldPosition);
 
-void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosition, GUI interface, Screen screen, Camera2D camera, Cursor *cursor);
+void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera, Cursor *cursor);
 
-void drawRectangleList(std::vector<Block> blockList);
+void drawRectangleList(std::vector<Block> blockList, Modes *mode);
 
 EditModeGUI setupEditModeGUI(Screen screen);
 
-void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Vector2 mousePosition);
+void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Cursor *cursor);
 
 void drawEditModeSelectButton(Screen screen, Modes *modes, int btnNumber, float size);
+
+void resetEditMode(Modes *mode);

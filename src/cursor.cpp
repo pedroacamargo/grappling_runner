@@ -12,7 +12,7 @@ void handleCursor(Cursor *cursor, Camera2D camera, GUI *interface, Screen screen
     // --------------------------------------------------------------------------------------------------------------------> GUI
     
     Rectangle GUIdefaultArea[] = {
-        {(*interface).position.x, (*interface).position.y + (GUI_BUTTONS_NUMBER * ((GUI_BUTTON_MARGIN * 2) + GUI_BUTTON_HEIGHT)), (*interface).width, screen.screenHeight},
+        {(*interface).position.x, (*interface).position.y + (GUI_BUTTONS_NUMBER * ((GUI_BUTTON_MARGIN * 2) + GUI_BUTTON_HEIGHT)), (*interface).width,(float) screen.screenHeight},
         {interface->position.x, interface->position.y, GUI_BUTTON_MARGIN, GUI_BUTTON_HEIGHT + (GUI_BUTTON_MARGIN * 2)},
         {interface->position.x, interface->position.y, interface->width, GUI_BUTTON_MARGIN },
         {interface->position.x, interface->position.y + interface->width - GUI_BUTTON_MARGIN, GUI_BUTTON_MARGIN, GUI_BUTTON_HEIGHT + (GUI_BUTTON_MARGIN * 2)}

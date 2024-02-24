@@ -98,14 +98,8 @@ int main(void) {
 
   // Game Loop
   while (!WindowShouldClose()) {
-
-
     handleCursor(&cursor, camera, &interface, screen, &modes);
     getGameInput(&camera, &actualCamera, &modes, &interface);
-
-    mousePosition = GetMousePosition();
-    mousePositionWorld = GetScreenToWorld2D(mousePosition, camera);
-
 
     /**
      * @attention Development Camera
@@ -118,13 +112,13 @@ int main(void) {
 
           DrawEngineGrid2D(1000, 50, screen);
           DrawPlayCameraSilhouette(cameraPlay, screen);
-          editModeHandler(&modes, mousePositionWorld, mousePosition, interface, screen, camera, &cursor);
-          drawRectangleList(modes.editMode.blockList);
+          editModeHandler(&modes, interface, screen, camera, &cursor);
+          drawRectangleList(modes.editMode.blockList, &modes);
 
         EndMode2D();
 
         DrawGUI(camera,cursor,&interface,screen,defaultFont,&modes.engine_mode);
-        drawEditModeGUI(screen, &modes, interface, mousePosition);
+        drawEditModeGUI(screen, &modes, interface, &cursor);
 
         // Debug block code
         if (modes.engine_mode == DEBUG_MODE) {
@@ -149,7 +143,7 @@ int main(void) {
             DrawEngineGrid2D(1000, 50, screen);
           }
 
-          drawRectangleList(modes.editMode.blockList);
+          drawRectangleList(modes.editMode.blockList, &modes);
 
         EndMode2D();
 
