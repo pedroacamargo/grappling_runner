@@ -17,7 +17,7 @@ void DrawToggleGUI(GUI *interface, Screen screen, Font font, Vector2 mousePositi
   );
 
   // Toggle GUI
-  if (CheckCollisionPointRec(mousePosition,toggleGUIRec) && !IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
+  if (CheckCollisionPointRec(mousePosition,toggleGUIRec)) {
     interface->mouseState = CURSOR_POINTING;
 
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {

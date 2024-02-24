@@ -13,7 +13,7 @@ Rectangle createRectangle(Vector2 mouseWorldPosition) {
     return rec;
 }
 
-void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosition, GUI interface, Screen screen, Camera2D camera) {
+void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosition, GUI interface, Screen screen, Camera2D camera, Cursor *cursor) {
 
     // Check if the mouse is over the GUI
     bool overwriteGUI = 
@@ -162,56 +162,48 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
         // --------------------------------------------------------------------
         int arrowMargin = 5;
         Texture2D *arrowTexture = mode->editMode.textures.arrowTexture;
-        Rectangle *rec = &mode->editMode.scaleSelectedBlock->rec;
-        bool isMouseOverArrow = false;
+        Rectangle *rec = &mode->editMode.scaleMode.scaleSelectedBlock->rec;
+        IsMouseOverBlockScaleArrows isMouseOverArrow = isMouseOverBlockScaleArrows(mode, cursor);
+
+        if (isMouseOverArrow.isOver && IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
+            mode->editMode.scaleMode.isScaling = isMouseOverArrow.arrow;
+        } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
+            mode->editMode.scaleMode.isScaling = -1;
+        }
+
+        Vector2 delta = GetMouseDelta();
+
+        if (mode->editMode.scaleMode.isScaling != -1) {
+            if (mode->editMode.scaleMode.isScaling == EDIT_MODE_SCALE_ARROW_TOP) {
+                if (mode->editMode.scaleMode.flag != SCALE_MODE_FLAG_STOP_SCALING) {
+                    rec->y += delta.y;
+                    rec->height += -delta.y;
+                } else {
+                    if (delta.y < 0) {
+                        rec->y += delta.y;
+                        rec->height += -delta.y;
+                    }
+                }
+
+                if (rec->height < MINIMUM_BLOCK_SIZE) {
+                    mode->editMode.scaleMode.flag = SCALE_MODE_FLAG_STOP_SCALING;
+                } else {
+                    mode->editMode.scaleMode.flag = 0;
+                }
+
+            } else if (mode->editMode.scaleMode.isScaling == EDIT_MODE_SCALE_ARROW_BOTTOM) {
+                mode->editMode.scaleMode.scaleSelectedBlock->rec.height += 1;
+            } else if (mode->editMode.scaleMode.isScaling == EDIT_MODE_SCALE_ARROW_LEFT) {
+                mode->editMode.scaleMode.scaleSelectedBlock->rec.x -= 1;
+                mode->editMode.scaleMode.scaleSelectedBlock->rec.width += 1;
+            } else if (mode->editMode.scaleMode.isScaling == EDIT_MODE_SCALE_ARROW_RIGHT) {
+                mode->editMode.scaleMode.scaleSelectedBlock->rec.width += 1;
+            }
+        }
         
         if (rec != nullptr) {
-            Rectangle arrowHitboxes[] = {
-                { rec->x + rec->width/2 - arrowTexture->width/2, rec->y - arrowTexture->height - arrowMargin,(float) arrowTexture->width, (float) arrowTexture->height }, // up
-                { rec->x + rec->width/2 - arrowTexture->width/2, rec->y + rec->height + arrowTexture->height/3 - arrowMargin,(float) arrowTexture->width, (float) arrowTexture->height }, // down
-                { rec->x - arrowTexture->width - arrowMargin, rec->y + rec->height/2 - arrowTexture->height/2,(float) arrowTexture->width, (float) arrowTexture->height }, // left
-                { rec->x + rec->width + arrowTexture->width/3 - arrowMargin, rec->y + rec->height/2 - arrowTexture->height/2, (float) arrowTexture->width, (float) arrowTexture->height } // right
-            };
-
-            // TODO: Handle debug mode in a better way
-            // if (mode->engine_mode == EDIT_MODE) {
-            //     for (int i = 0; i < 4; i++) {
-            //         DrawRectangleRec(arrowHitboxes[i], RED);
-            //     }
-            // }
-
-
-            // TODO: Improve this code
-            isMouseOverArrow = CheckCollisionPointRec(mouseWorldPosition, arrowHitboxes[0]) ||
-                                    CheckCollisionPointRec(mouseWorldPosition, arrowHitboxes[1]) ||
-                                    CheckCollisionPointRec(mouseWorldPosition, arrowHitboxes[2]) ||
-                                    CheckCollisionPointRec(mouseWorldPosition, arrowHitboxes[3]);
-        }
-
-        // TODO: Handle the cursor in a better way
-        // if (isMouseOverArrow && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
-        //     interface.mouseState = CURSOR_POINTING;
-        // } else if (mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
-        //     interface.mouseState = CURSOR_DEFAULT;
-        // }
-
-        // Handle the scale mode
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
-            if (mode->editMode.scaleSelectedBlock != nullptr && !isMouseOverArrow) {
-                mode->editMode.scaleSelectedBlock->color = RED;
-                mode->editMode.scaleSelectedBlock = nullptr;
-            }
-
-            for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
-                if (CheckCollisionPointRec(mouseWorldPosition, mode->editMode.blockList[i].rec)) {
-                    mode->editMode.scaleSelectedBlock = &mode->editMode.blockList[i];
-                    mode->editMode.blockList[i].color = GREEN;
-                } 
-            }
-        }
-
-        if (rec != nullptr) {
-
+            // Draw arrows around the block
+            // 0: up, 1: down, 2: left, 3: right
             Vector2 positions[] = {
                 { rec->x + rec->width/2 - arrowTexture->width/2, rec->y - arrowTexture->height/3 + arrowMargin }, // up
                 { rec->x + rec->width/2 + arrowTexture->width/2, rec->y + rec->height + arrowTexture->height/3 - arrowMargin }, // down
@@ -225,7 +217,21 @@ void editModeHandler(Modes *mode, Vector2 mouseWorldPosition, Vector2 mousePosit
             for (Vector2 blockPosition : positions) {
                 DrawTextureEx(*arrowTexture, blockPosition, rotations[i++], 1, WHITE);            
             }
+        }
 
+        // Handle the scale mode
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
+            if (mode->editMode.scaleMode.scaleSelectedBlock != nullptr && !isMouseOverArrow.isOver && mode->editMode.scaleMode.isScaling == -1) {
+                mode->editMode.scaleMode.scaleSelectedBlock->color = RED;
+                mode->editMode.scaleMode.scaleSelectedBlock = nullptr;
+            } 
+
+            for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
+                if (CheckCollisionPointRec(mouseWorldPosition, mode->editMode.blockList[i].rec)) {
+                    mode->editMode.scaleMode.scaleSelectedBlock = &mode->editMode.blockList[i];
+                    mode->editMode.blockList[i].color = GREEN;
+                } 
+            }
         }
     } 
     
@@ -287,7 +293,7 @@ void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Vector2 mousePo
             DrawRectangleRec(recX, GRAY);
             DrawText(TextFormat("X: %.2f", selectedBlock->rec.x), interface.position.x + 20, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 60, 30, WHITE);
 
-            float posY2 = interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 87.5; // avoid narrowing conversion warning
+            float posY2 = interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 97.5; // avoid narrowing conversion warning
             Rectangle recY = { interface.position.x + 50, posY2, interface.width - 60, 32 };
             DrawRectangleRec(recY, GRAY);
             DrawText(TextFormat("Y: %.2f", selectedBlock->rec.y), interface.position.x + 20, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 100, 30, WHITE);

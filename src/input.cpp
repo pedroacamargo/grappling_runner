@@ -3,7 +3,6 @@
 void MoveAxisWithMouse(Camera2D *camera, GUI *interface) {
     if (IsMouseButtonDown(GRID_MOVEMENT_CONTROL_CURSOR))
     {   
-      interface->mouseState = CURSOR_CROSSHAIR;
       Vector2 delta = GetMouseDelta();
       delta = Vector2Scale(delta, -1.0f/ (*camera).zoom);
 

@@ -7,6 +7,7 @@
 #include "../includes/editMode.hpp"
 #include "../includes/input.hpp"
 #include "../includes/draw.hpp"
+#include "../includes/cursor.hpp"
 
 int main(void) {
   Screen screen = setupWindow(1920,1080,true);
@@ -61,7 +62,9 @@ int main(void) {
   editMode.selectionBox.rec = { 0, 0, 0, 0 };
   editMode.blockIdsNumber = 0;
   editMode.moveSelectedBlock = nullptr;
-  editMode.scaleSelectedBlock = nullptr;
+  editMode.scaleMode.scaleSelectedBlock = nullptr;
+  editMode.scaleMode.flag = 0;
+  editMode.scaleMode.isScaling = -1;
   editMode.textures.arrowTexture = &arrowTexture; // Arrow texture when moving
 
   /**
@@ -72,20 +75,37 @@ int main(void) {
 
   /**
    * @def Engine Mode
-   * @enum 0 - Normal Mode
-   * @enum 1 - Edit Mode
-   * @enum 2 - Debug Mode
+   * @enum 0 - Debug Mode
+   * @enum 1 - Normal Mode
+   * @enum 2 - Edit Mode
   */
   Modes modes = { DEBUG_MODE, editMode };
+
+  /**
+   * @def Cursor
+   * @param layer - 0: Debug mode, 1: Normal mode, 2: Edit mode
+   * @param mouseState - Cursor state
+   * @param screenPosition - Mouse position on the screen
+   * @param worldPosition - Mouse position on the world
+  */
+  Cursor cursor;
+  cursor.layer = 0;
+  cursor.mouseState = CURSOR_DEFAULT;
+  cursor.screenPosition = { 0, 0 };
+  cursor.worldPosition = { 0, 0 };
 
   SetTargetFPS(60);
 
   // Game Loop
   while (!WindowShouldClose()) {
-    SetMouseCursor(interface.mouseState);
+
+
+    handleCursor(&cursor, camera, &interface, screen, &modes);
+    getGameInput(&camera, &actualCamera, &modes, &interface);
+
     mousePosition = GetMousePosition();
     mousePositionWorld = GetScreenToWorld2D(mousePosition, camera);
-    getGameInput(&camera, &actualCamera, &modes, &interface);
+
 
     /**
      * @attention Development Camera
@@ -96,19 +116,19 @@ int main(void) {
         
         BeginMode2D(camera);
 
-          DrawEngineGrid2D(1000, 50, screen, &camera, mousePosition, &interface, modes);
+          DrawEngineGrid2D(1000, 50, screen);
           DrawPlayCameraSilhouette(cameraPlay, screen);
-          editModeHandler(&modes, mousePositionWorld, mousePosition, interface, screen, camera);
+          editModeHandler(&modes, mousePositionWorld, mousePosition, interface, screen, camera, &cursor);
           drawRectangleList(modes.editMode.blockList);
 
         EndMode2D();
 
-        DrawGUI(camera,mousePosition,&interface,screen,defaultFont,&modes.engine_mode);
+        DrawGUI(camera,cursor,&interface,screen,defaultFont,&modes.engine_mode);
         drawEditModeGUI(screen, &modes, interface, mousePosition);
 
         // Debug block code
         if (modes.engine_mode == DEBUG_MODE) {
-          DrawDebugBoard(camera);
+          DrawDebugBoard(&cursor, camera);
         }
 
     EndTextureMode();
@@ -126,7 +146,7 @@ int main(void) {
 
           // Debug block code
           if (modes.engine_mode == DEBUG_MODE) {
-            DrawEngineGrid2D(1000, 50, screen, &cameraPlay, mousePosition, &interface, modes);
+            DrawEngineGrid2D(1000, 50, screen);
           }
 
           drawRectangleList(modes.editMode.blockList);
@@ -136,7 +156,7 @@ int main(void) {
         
         // Debug block code
         if (modes.engine_mode == DEBUG_MODE) {
-          DrawDebugBoard(cameraPlay);
+          DrawDebugBoard(&cursor, cameraPlay);
           DrawRectangle(screen.screenWidth/2 - 5,screen.screenHeight/2 - 5,10.0f,10.0f, BLACK);
         }
 
@@ -152,7 +172,6 @@ int main(void) {
       } else {
         DrawTextureRec(screenCamera2.texture, screenFlipped, { 0, 0 }, WHITE);
       }
-
 
     EndDrawing();
   }

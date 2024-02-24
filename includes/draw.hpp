@@ -11,7 +11,7 @@
  * This function draws the grid of the engine
  * @param camera The camera to be used
 */
-void DrawDebugBoard(Camera2D camera);
+void DrawDebugBoard(Cursor *cursor, Camera2D camera);
 
 /**
  * This function draws the grid of the engine
@@ -23,7 +23,7 @@ void DrawDebugBoard(Camera2D camera);
  * @param interface The GUI interface
  * @param engine_mode The engine mode
 */
-void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *camera, Vector2 mousePosition, GUI *interface, Modes mode);
+void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen);
 
 
 /**
@@ -35,7 +35,7 @@ void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen, Camera2D *ca
  * @param font The font to be used
  * @param engine_mode The engine mode
 */
-void DrawGUI(Camera2D camera, Vector2 mousePosition, GUI *interface, Screen screen, Font font, int *engine_mode);
+void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font font, int *engine_mode);
 
 /**
  * This function draws the silhouette of the play camera

@@ -7,6 +7,9 @@
 #define GRID_MOVEMENT_CONTROL_CURSOR MOUSE_BUTTON_MIDDLE
 //... other controls
 
+// settings
+#define MINIMUM_BLOCK_SIZE 30
+
 // --------------------------------------------------------------------------------------------> Global
 
 typedef struct size {
@@ -54,6 +57,13 @@ typedef struct selectionBox {
     Rectangle rec;
 } SelectionBox;
 
+typedef struct scaleMode {
+    int isScaling;
+    int flag;
+    Block *scaleSelectedBlock;
+} ScaleMode;
+#define SCALE_MODE_FLAG_STOP_SCALING 1
+
 typedef struct editmode {
     int editModeState;
     int blockIdsNumber;
@@ -61,8 +71,8 @@ typedef struct editmode {
     EditModeGUI editModeInterface;
     SelectionBox selectionBox;
     Block *moveSelectedBlock;
-    Block *scaleSelectedBlock;
     EditModeTexture textures;
+    ScaleMode scaleMode;
 } EditMode;
 
 typedef enum {
@@ -97,6 +107,11 @@ typedef struct gui {
     int mouseState;
 } GUI;
 
+// Buttons
+#define GUI_BUTTONS_NUMBER 1
+#define GUI_BUTTON_HEIGHT 50
+#define GUI_BUTTON_MARGIN 10.0f
+
 // GUI cursor states
 #define CURSOR_DEFAULT 1
 #define CURSOR_CROSSHAIR 3
@@ -108,3 +123,12 @@ typedef struct modes {
     int engine_mode;
     EditMode editMode;
 } Modes;
+
+// --------------------------------------------------------------------------------------------> Cursor
+
+typedef struct cursor {
+    int layer;
+    int mouseState;
+    Vector2 worldPosition;
+    Vector2 screenPosition;
+} Cursor;
