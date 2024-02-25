@@ -7,7 +7,23 @@ void MoveAxisWithMouse(Camera2D *camera, GUI *interface) {
       delta = Vector2Scale(delta, -1.0f/ (*camera).zoom);
 
       (*camera).target = Vector2Add((*camera).target, delta);
+    }
+
+    if (IsKeyDown(KEY_A)) {
+      (*camera).target.x -= 10;
+    }
+
+    if (IsKeyDown(KEY_D)) {
+      (*camera).target.x += 10;
     } 
+    
+    if (IsKeyDown(KEY_W)) {
+      (*camera).target.y -= 10;
+    } 
+    
+    if (IsKeyDown(KEY_S)) {
+      (*camera).target.y += 10;
+    }
 }
 
 void ZoomAxisWithMouseWheel(Camera2D *camera) {
@@ -52,5 +68,10 @@ void getGameInput(Camera2D *camera, int *actualCamera, Modes *mode, GUI *interfa
       }
 
       mode->editMode.selectionBox.selectedBlocks.clear();
+    }
+
+    // Save the blocks to a file
+    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) {
+      createSaveFile(&mode->editMode.blockList);
     }
 }

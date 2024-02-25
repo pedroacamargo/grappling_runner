@@ -7,6 +7,7 @@
 #include "../includes/editMode.hpp"
 #include "../includes/input.hpp"
 #include "../includes/draw.hpp"
+#include "../includes/files.hpp"
 #include "../includes/cursor.hpp"
 
 int main(void) {
@@ -66,6 +67,7 @@ int main(void) {
   editMode.scaleMode.flag = 0;
   editMode.scaleMode.isScaling = -1;
   editMode.textures.arrowTexture = &arrowTexture; // Arrow texture when moving
+  readBlocksFromFile("data/test", &editMode.blockList);
 
   /**
    * @def Mouse Position
@@ -170,8 +172,9 @@ int main(void) {
     EndDrawing();
   }
 
-  CloseWindow();
   UnloadTexture(arrowTexture);
+
+  CloseWindow();
 
   return 0;
 }

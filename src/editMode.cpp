@@ -173,6 +173,7 @@ void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera,
         }
 
         Vector2 delta = GetMouseDelta();
+        delta = Vector2Scale(delta, 1.0f/ camera.zoom);
 
         // handle scale mode on each arrow
         if (mode->editMode.scaleMode.isScaling != -1) {

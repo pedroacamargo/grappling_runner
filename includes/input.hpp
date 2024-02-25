@@ -3,6 +3,7 @@
 #include "raymath.h"
 #include "globals.hpp"
 #include "setup.hpp"
+#include "files.hpp"
 
 void MoveAxisWithMouse(Camera2D *camera, GUI *interface);
 
