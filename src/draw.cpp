@@ -17,7 +17,7 @@ void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen) {
     rlPopMatrix();
 }
 
-void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font font, int *engine_mode) {
+void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font font, Modes *mode) {
   /**
    * @def Variables
   */
@@ -39,10 +39,10 @@ void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font
   DrawRectangleRec(container, (*interface).GUI_color);
   
   // Draw First Button
-  DrawRectangleButton(engine_mode, cursor.screenPosition, buttonMargin,interface,buttonHeight);
+  DrawRectangleButton(&mode->engine_mode, cursor.screenPosition, buttonMargin,interface,buttonHeight);
 
   // Draw menu buttons
-  DrawHamburguerMenu(interface, screen);
+  DrawHamburguerMenu(interface, screen, mode);
 }
 
 void DrawPlayCameraSilhouette(Camera2D camera, Screen screen) {

@@ -44,6 +44,8 @@ GUI setupGUI(int width, Screen screen) {
     newGUI.bottomMenu.size = { (float) screen.screenWidth, 40.0f };
     newGUI.bottomMenu.position = { 0, (float) screen.screenHeight - newGUI.bottomMenu.size.height };
     newGUI.bottomMenu.color = WHITE;
+    newGUI.bottomMenu.isOpened = false;
+    newGUI.bottomMenu.fileWasSavedResponse = 0;
 
     // mouse state default
     newGUI.mouseState = 1;

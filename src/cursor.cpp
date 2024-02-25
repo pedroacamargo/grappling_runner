@@ -3,7 +3,7 @@
 void handleCursor(Cursor *cursor, Camera2D camera, GUI *interface, Screen screen, Modes *mode) {
 
     if (mode->engine_mode == DEBUG_MODE) cursor->layer = 0;
-    else if (mode->engine_mode == NORMAL_MODE) cursor->layer = 1;
+    else if (mode->engine_mode == PLAY_MODE) cursor->layer = 1;
     else if (mode->engine_mode == EDIT_MODE) cursor->layer = 2;
 
     cursor->screenPosition = GetMousePosition();
@@ -77,7 +77,7 @@ void handleCursor(Cursor *cursor, Camera2D camera, GUI *interface, Screen screen
             cursor->mouseState = CURSOR_CROSSHAIR;
         }
 
-    } else if (cursor->layer == NORMAL_MODE) { // Normal mode
+    } else if (cursor->layer == PLAY_MODE) { // Play mode
 
         cursor->mouseState = CURSOR_DEFAULT;
 

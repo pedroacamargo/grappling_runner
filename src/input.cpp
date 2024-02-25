@@ -1,29 +1,28 @@
 #include "../includes/input.hpp"
 
-void MoveAxisWithMouse(Camera2D *camera, GUI *interface) {
-    if (IsMouseButtonDown(GRID_MOVEMENT_CONTROL_CURSOR))
-    {   
-      Vector2 delta = GetMouseDelta();
-      delta = Vector2Scale(delta, -1.0f/ (*camera).zoom);
+void MoveAxisWithMouse(Camera2D *camera, GUI *interface, Modes *mode) {
+  if (IsMouseButtonDown(GRID_MOVEMENT_CONTROL_CURSOR))
+  {   
+    Vector2 delta = GetMouseDelta();
+    delta = Vector2Scale(delta, -1.0f/ (*camera).zoom);
 
-      (*camera).target = Vector2Add((*camera).target, delta);
-    }
+    (*camera).target = Vector2Add((*camera).target, delta);
+  }
 
-    if (IsKeyDown(KEY_A)) {
-      (*camera).target.x -= 10;
-    }
+  if (mode->engine_mode == EDIT_MODE || mode->engine_mode == DEVELOPMENT_MODE) {
 
-    if (IsKeyDown(KEY_D)) {
-      (*camera).target.x += 10;
-    } 
+    if (IsKeyDown(KEY_A) && IsKeyDown(KEY_LEFT_SHIFT)) camera->target.x -= 50;
+    else if (IsKeyDown(KEY_A)) (*camera).target.x -= 10;
+
+    if (IsKeyDown(KEY_D) && IsKeyDown(KEY_LEFT_SHIFT)) camera->target.x += 50;
+    else if (IsKeyDown(KEY_D)) (*camera).target.x += 10;
     
-    if (IsKeyDown(KEY_W)) {
-      (*camera).target.y -= 10;
-    } 
+    if (IsKeyDown(KEY_W) && IsKeyDown(KEY_LEFT_SHIFT)) camera->target.y -= 50;
+    else if (IsKeyDown(KEY_W)) (*camera).target.y -= 10;
     
-    if (IsKeyDown(KEY_S)) {
-      (*camera).target.y += 10;
-    }
+    if (IsKeyDown(KEY_S) && IsKeyDown(KEY_LEFT_SHIFT)) camera->target.y += 50;
+    else if (IsKeyDown(KEY_S)) (*camera).target.y += 10;
+  }
 }
 
 void ZoomAxisWithMouseWheel(Camera2D *camera) {
@@ -39,18 +38,18 @@ void ZoomAxisWithMouseWheel(Camera2D *camera) {
 }
 
 void getGameInput(Camera2D *camera, int *actualCamera, Modes *mode, GUI *interface) {
-    MoveAxisWithMouse(camera, interface);
+    MoveAxisWithMouse(camera, interface, mode);
     ZoomAxisWithMouseWheel(camera);
 
     if (IsKeyPressed(KEY_Q)) {
       if (*actualCamera == 1) {
         *actualCamera = 2;
-        mode->engine_mode = NORMAL_MODE;
+        mode->engine_mode = PLAY_MODE;
       } else {
         *actualCamera = 1;
 
         // TODO: handle this better
-        mode->engine_mode = DEBUG_MODE;
+        mode->engine_mode = ACTUAL_MODE;
       }
     }
 
@@ -68,10 +67,5 @@ void getGameInput(Camera2D *camera, int *actualCamera, Modes *mode, GUI *interfa
       }
 
       mode->editMode.selectionBox.selectedBlocks.clear();
-    }
-
-    // Save the blocks to a file
-    if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) {
-      createSaveFile(&mode->editMode.blockList);
     }
 }

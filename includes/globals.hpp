@@ -9,6 +9,7 @@
 
 // settings
 #define MINIMUM_BLOCK_SIZE 30
+#define ACTUAL_MODE DEVELOPMENT_MODE
 
 // --------------------------------------------------------------------------------------------> Global
 
@@ -28,14 +29,6 @@ typedef struct block {
     int id;
     int layer;
 } Block; // Each element of the grid
-
-// --------------------------------------------------------------------------------------------> Engine Modes
-
-typedef enum {
-    DEBUG_MODE = 0,
-    NORMAL_MODE = 1,
-    EDIT_MODE = 2
-} EngineModes;
 
 // --------------------------------------------------------------------------------------------> Edit Mode
 
@@ -106,6 +99,8 @@ typedef struct gui_button {
     Size size;
     Vector2 position;
     Color color;
+    bool isOpened;
+    int fileWasSavedResponse;
 } GUIBottomMenu;
 
 typedef struct gui {
@@ -135,6 +130,14 @@ typedef struct gui {
 #define CURSOR_POINTING 4
 
 // --------------------------------------------------------------------------------------------> Modes
+
+
+typedef enum {
+    DEBUG_MODE = 0,
+    DEVELOPMENT_MODE = 1,
+    EDIT_MODE = 2,
+    PLAY_MODE = 3
+} EngineModes;
 
 typedef struct modes {
     int engine_mode;

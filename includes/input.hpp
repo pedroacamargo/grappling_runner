@@ -5,7 +5,7 @@
 #include "setup.hpp"
 #include "files.hpp"
 
-void MoveAxisWithMouse(Camera2D *camera, GUI *interface);
+void MoveAxisWithMouse(Camera2D *camera, GUI *interface, Modes *mode);
 
 void ZoomAxisWithMouseWheel(Camera2D *camera);
 

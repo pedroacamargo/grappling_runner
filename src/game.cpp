@@ -86,7 +86,7 @@ int main(void) {
    * @enum 1 - Normal Mode
    * @enum 2 - Edit Mode
   */
-  Modes modes = { DEBUG_MODE, editMode };
+  Modes modes = { DEVELOPMENT_MODE, editMode };
 
   /**
    * @def Cursor
@@ -124,7 +124,7 @@ int main(void) {
 
         EndMode2D();
 
-        DrawGUI(camera,cursor,&interface,screen,defaultFont,&modes.engine_mode);
+        DrawGUI(camera,cursor,&interface,screen,defaultFont,&modes);
         drawEditModeGUI(screen, &modes, interface, &cursor);
 
         // Debug block code
@@ -146,7 +146,7 @@ int main(void) {
         BeginMode2D(cameraPlay);
 
           // Debug block code
-          if (modes.engine_mode == DEBUG_MODE) {
+          if (modes.engine_mode == DEBUG_MODE || modes.engine_mode == DEVELOPMENT_MODE) {
             DrawEngineGrid2D(1000, 50, screen);
           }
 
@@ -156,7 +156,7 @@ int main(void) {
 
         
         // Debug block code
-        if (modes.engine_mode == DEBUG_MODE) {
+        if (modes.engine_mode == DEBUG_MODE || modes.engine_mode == DEVELOPMENT_MODE) {
           DrawDebugBoard(&cursor, cameraPlay);
           DrawRectangle(screen.screenWidth/2 - 5,screen.screenHeight/2 - 5,10.0f,10.0f, BLACK);
         }

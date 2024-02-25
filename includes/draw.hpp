@@ -35,7 +35,7 @@ void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen);
  * @param font The font to be used
  * @param engine_mode The engine mode
 */
-void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font font, int *engine_mode);
+void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font font, Modes *mode);
 
 /**
  * This function draws the silhouette of the play camera

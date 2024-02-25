@@ -5,6 +5,7 @@
 #include <cmath>
 #include "setup.hpp"
 #include "globals.hpp"
+#include "files.hpp"
 
 
 void DrawToggleGUI(GUI *interface, Screen screen, Font font, Vector2 mousePosition);
@@ -13,4 +14,4 @@ void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMarg
 
 void AnimateToggleGUI(GUI *interface, Screen screen);
 
-void DrawHamburguerMenu(GUI *interface, Screen screen);
+void DrawHamburguerMenu(GUI *interface, Screen screen, Modes *mode);
