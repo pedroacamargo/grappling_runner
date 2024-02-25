@@ -76,3 +76,9 @@ void AnimateToggleGUI(GUI *interface, Screen screen) {
   }
 
 }
+
+void DrawHamburguerMenu(GUI *interface, Screen screen) {
+  Texture2D texture = *interface->textures.hamburguerMenuIconTexture;
+  // DrawRectangle(interface->bottomMenu.position.x, interface->bottomMenu.position.y, interface->bottomMenu.size.width, interface->bottomMenu.size.height, BLUE);
+  DrawTextureEx(texture, {GUI_HAMBURGUER_MENU_BUTTON_PADDING, (float) screen.screenHeight - texture.height/2 - GUI_HAMBURGUER_MENU_BUTTON_PADDING}, 0, 0.5, interface->bottomMenu.color);
+}

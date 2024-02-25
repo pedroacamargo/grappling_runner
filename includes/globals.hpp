@@ -88,14 +88,25 @@ typedef enum {
 } EditModeMenuGUI;
 
 // Number of buttons in the edit mode interface
+// TODO: Change this to EDIT_MODE_BUTTONS_NUMBER
 #define BUTTONS_NUMBER 4
 
 // --------------------------------------------------------------------------------------------> GUI
+
+typedef struct gui_textures {
+    Texture2D *hamburguerMenuIconTexture;
+} GUITextures;
 
 typedef struct toggleButton {
     Size size;
     Vector2 position;
 } GUIToggleButton;
+
+typedef struct gui_button {
+    Size size;
+    Vector2 position;
+    Color color;
+} GUIBottomMenu;
 
 typedef struct gui {
     Color GUI_color;
@@ -106,12 +117,17 @@ typedef struct gui {
     Vector2 position;
     bool isOpened;
     int mouseState;
+    GUITextures textures;
+    GUIBottomMenu bottomMenu;
 } GUI;
 
 // Buttons
 #define GUI_BUTTONS_NUMBER 1
 #define GUI_BUTTON_HEIGHT 50
 #define GUI_BUTTON_MARGIN 10.0f
+
+#define GUI_HAMBURGUER_MENU_BUTTON_PADDING 5
+#define GUI_BOTTOM_MENU_BUTTONS_NUMBER 1
 
 // GUI cursor states
 #define CURSOR_DEFAULT 1

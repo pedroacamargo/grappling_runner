@@ -40,7 +40,10 @@ GUI setupGUI(int width, Screen screen) {
         0
     };
     newGUI.toggleButton.size = { 50.0f, 100.0f };
-    newGUI.toggleButton.position = { newGUI.position.x - newGUI.toggleButton.size.width/2, screen.screenHeight / 2 - newGUI.toggleButton.size.height/2 };
+    newGUI.toggleButton.position = { newGUI.position.x - newGUI.toggleButton.size.width/2, (float) screen.screenHeight / 2 - newGUI.toggleButton.size.height/2 };
+    newGUI.bottomMenu.size = { (float) screen.screenWidth, 40.0f };
+    newGUI.bottomMenu.position = { 0, (float) screen.screenHeight - newGUI.bottomMenu.size.height };
+    newGUI.bottomMenu.color = WHITE;
 
     // mouse state default
     newGUI.mouseState = 1;

@@ -15,6 +15,7 @@ int main(void) {
 
   // --------------------------------------------------------------------------------------------------------------------> Textures
   Texture2D arrowTexture = LoadTexture("resources/grayArrow.png");
+  Texture2D hamburguerMenuGUITexture = LoadTexture("resources/hamburguerMenuWhiteSmall.png");
   
 
 
@@ -44,6 +45,7 @@ int main(void) {
   */
   Font defaultFont = GetFontDefault();
   GUI interface = setupGUI(400,screen);
+  interface.textures.hamburguerMenuIconTexture = &hamburguerMenuGUITexture;
 
   /**
    * @def Rectangle List Setup
@@ -67,7 +69,10 @@ int main(void) {
   editMode.scaleMode.flag = 0;
   editMode.scaleMode.isScaling = -1;
   editMode.textures.arrowTexture = &arrowTexture; // Arrow texture when moving
-  readBlocksFromFile("data/test", &editMode.blockList);
+
+  // Load blocks from last save
+  char filePath[] = "data/saveOne";
+  readBlocksFromFile(filePath, &editMode.blockList);
 
   /**
    * @def Mouse Position
@@ -173,6 +178,7 @@ int main(void) {
   }
 
   UnloadTexture(arrowTexture);
+  UnloadTexture(hamburguerMenuGUITexture);
 
   CloseWindow();
 

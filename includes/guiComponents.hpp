@@ -12,3 +12,5 @@ void DrawToggleGUI(GUI *interface, Screen screen, Font font, Vector2 mousePositi
 void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMargin, GUI *interface, float buttonHeight);
 
 void AnimateToggleGUI(GUI *interface, Screen screen);
+
+void DrawHamburguerMenu(GUI *interface, Screen screen);

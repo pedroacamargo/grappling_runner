@@ -28,6 +28,9 @@ void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font
   // Animate Toggle GUI
   AnimateToggleGUI(interface, screen);
   
+  // Draw Bottom Menu
+  DrawRectangleRec((Rectangle){interface->bottomMenu.position.x, interface->bottomMenu.position.y, interface->bottomMenu.size.width, interface->bottomMenu.size.height}, interface->GUI_color);
+
   // Draw Toggle GUI
   DrawToggleGUI(interface, screen, font, cursor.screenPosition);
 
@@ -37,6 +40,9 @@ void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font
   
   // Draw First Button
   DrawRectangleButton(engine_mode, cursor.screenPosition, buttonMargin,interface,buttonHeight);
+
+  // Draw menu buttons
+  DrawHamburguerMenu(interface, screen);
 }
 
 void DrawPlayCameraSilhouette(Camera2D camera, Screen screen) {
