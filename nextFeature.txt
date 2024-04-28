@@ -1,0 +1,8 @@
+Pre video 3 feature:
+1- Code Cleanup and folders arrangement
+
+Video 3 Features:
+1- Add a color customization on each block (also a function to read hex to rgb)
+2- Add Layers and priority for each block (Transform the data structure from linked list to Hashmap)
+3- Add Movement to a specified block
+4- Add a simple gravity for the player jump movement

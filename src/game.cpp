@@ -52,23 +52,30 @@ int main(void) {
   */
   std::vector<Block> blockList;
   EditModeGUI editModeInterface = setupEditModeGUI(screen);
-  EditMode editMode;
-  editMode.editModeState = EDIT_MODE_STATE_CREATE;
-  editMode.selectionBox.selectedBlocks = {};
-  editMode.blockList = blockList;
-  editMode.editModeInterface = editModeInterface;
-  editMode.selectionBox.position = { 0, 0 };
-  editMode.selectionBox.size = { 0, 0 };
-  editMode.selectionBox.origin = { 0, 0 };
-  editMode.selectionBox.direction = { 0, 0 };
-  editMode.selectionBox.selectedBlocks = {};
-  editMode.selectionBox.rec = { 0, 0, 0, 0 };
-  editMode.blockIdsNumber = 0;
-  editMode.moveSelectedBlock = nullptr;
-  editMode.scaleMode.scaleSelectedBlock = nullptr;
-  editMode.scaleMode.flag = 0;
-  editMode.scaleMode.isScaling = -1;
-  editMode.textures.arrowTexture = &arrowTexture; // Arrow texture when moving
+  EditMode editMode = {
+    .editModeState = EDIT_MODE_STATE_CREATE,
+    .blockIdsNumber = 0,
+    .blockList = blockList,
+    .editModeInterface = editModeInterface,
+    .selectionBox = {
+      .origin = { 0, 0 },
+      .position = { 0, 0 },
+      .direction = { 0, 0 },
+      .size = { 0, 0 },
+      .selectedBlocks = {},
+      .rec = { 0, 0, 0, 0 }
+    },
+    .moveSelectedBlock = nullptr,
+    .textures = {
+      .arrowTexture = &arrowTexture // Arrow texture when moving
+    },
+    .scaleMode = {
+      .isScaling = -1,
+      .flag = 0,
+      .scaleSelectedBlock = nullptr,
+      .positionArrows = nullptr
+    },
+  };
 
   // Load blocks from last save
   char filePath[] = "data/saveOne";
@@ -86,7 +93,7 @@ int main(void) {
    * @enum 1 - Normal Mode
    * @enum 2 - Edit Mode
   */
-  Modes modes = { DEVELOPMENT_MODE, editMode };
+  Modes modes = { ACTUAL_MODE, editMode };
 
   /**
    * @def Cursor
@@ -95,11 +102,12 @@ int main(void) {
    * @param screenPosition - Mouse position on the screen
    * @param worldPosition - Mouse position on the world
   */
-  Cursor cursor;
-  cursor.layer = 0;
-  cursor.mouseState = CURSOR_DEFAULT;
-  cursor.screenPosition = { 0, 0 };
-  cursor.worldPosition = { 0, 0 };
+  Cursor cursor = {
+    .layer = 0,
+    .mouseState = CURSOR_DEFAULT,
+    .worldPosition = { 0, 0 },
+    .screenPosition = { 0, 0 },
+  };
 
   SetTargetFPS(60);
 
@@ -111,6 +119,7 @@ int main(void) {
     /**
      * @attention Development Camera
     */
+   if (actualCamera == 1 && modes.engine_mode != PLAY_MODE) {
     BeginTextureMode(screenCamera1);
         if (modes.engine_mode == EDIT_MODE) ClearBackground(SKYBLUE);
         else ClearBackground(RAYWHITE);
@@ -133,36 +142,38 @@ int main(void) {
         }
 
     EndTextureMode();
+   }
 
     // --------------------------------------------------------------------------------------------------------------------
     
     /**
      * @attention Game camera
     */
-    BeginTextureMode(screenCamera2);
-        ClearBackground(RAYWHITE);
-      
+   if (actualCamera == 2) {
+      BeginTextureMode(screenCamera2);
+          ClearBackground(RAYWHITE);
         
-        BeginMode2D(cameraPlay);
+          
+          BeginMode2D(cameraPlay);
 
+            // Debug block code
+            if (modes.engine_mode == DEBUG_MODE || modes.engine_mode == DEVELOPMENT_MODE) {
+              DrawEngineGrid2D(1000, 50, screen);
+            }
+
+            drawRectangleList(modes.editMode.blockList, &modes);
+
+          EndMode2D();
+
+          
           // Debug block code
           if (modes.engine_mode == DEBUG_MODE || modes.engine_mode == DEVELOPMENT_MODE) {
-            DrawEngineGrid2D(1000, 50, screen);
+            DrawDebugBoard(&cursor, cameraPlay);
+            DrawRectangle(screen.screenWidth/2 - 5,screen.screenHeight/2 - 5,10.0f,10.0f, BLACK);
           }
 
-          drawRectangleList(modes.editMode.blockList, &modes);
-
-        EndMode2D();
-
-        
-        // Debug block code
-        if (modes.engine_mode == DEBUG_MODE || modes.engine_mode == DEVELOPMENT_MODE) {
-          DrawDebugBoard(&cursor, cameraPlay);
-          DrawRectangle(screen.screenWidth/2 - 5,screen.screenHeight/2 - 5,10.0f,10.0f, BLACK);
-        }
-
-    EndTextureMode();
-
+      EndTextureMode();
+    }
     // --------------------------------------------------------------------------------------------------------------------
 
     BeginDrawing();

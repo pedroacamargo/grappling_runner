@@ -35,22 +35,25 @@ void DrawRectangleButton(int *engine_mode, Vector2 mousePosition, int buttonMarg
   Vector2 positionButtonOne = { (*interface).position.x + buttonMargin , (*interface).position.y + buttonMargin }; 
   Rectangle button_CreateRectangle = { positionButtonOne.x, positionButtonOne.y, (*interface).width - buttonMargin, buttonHeight };
 
+  char buttonText[] = "Enter Edit Mode";
+  float xOffset = 80.0f;
+
   if (CheckCollisionPointRec(mousePosition,button_CreateRectangle)) {
     
     interface->mouseState = CURSOR_POINTING;
 
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
       DrawRectangleRec(button_CreateRectangle,WHITE);
-      DrawText("Create a Rectangle",button_CreateRectangle.x + (button_CreateRectangle.width / 2) - 100.0f , button_CreateRectangle.y + (button_CreateRectangle.height / 2) - 10.0f , 20.0f,BLACK);
+      DrawText(buttonText, button_CreateRectangle.x + (button_CreateRectangle.width / 2) - xOffset , button_CreateRectangle.y + (button_CreateRectangle.height / 2) - 10.0f , 20.0f,BLACK);
 
       *engine_mode = *engine_mode == EDIT_MODE ? ACTUAL_MODE : EDIT_MODE;
     } else {
       DrawRectangleRec(button_CreateRectangle,{200,200,200,255});
-      DrawText("Create a Rectangle",button_CreateRectangle.x + (button_CreateRectangle.width / 2) - 100.0f , button_CreateRectangle.y + (button_CreateRectangle.height / 2) - 10.0f , 20.0f,BLACK);
+      DrawText(buttonText, button_CreateRectangle.x + (button_CreateRectangle.width / 2) - xOffset , button_CreateRectangle.y + (button_CreateRectangle.height / 2) - 10.0f , 20.0f,BLACK);
     }
   } else {
     DrawRectangleRec(button_CreateRectangle,interface->Button_color);
-    DrawText("Create a Rectangle",button_CreateRectangle.x + (button_CreateRectangle.width / 2) - 100.0f , button_CreateRectangle.y + (button_CreateRectangle.height / 2) - 10.0f , 20.0f,WHITE);
+    DrawText(buttonText, button_CreateRectangle.x + (button_CreateRectangle.width / 2) - xOffset , button_CreateRectangle.y + (button_CreateRectangle.height / 2) - 10.0f , 20.0f,WHITE);
   }
 }
 

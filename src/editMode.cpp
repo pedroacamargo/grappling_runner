@@ -52,10 +52,11 @@ void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera,
         // First click to select the blocks and start the selection box
         // Once released, select the blocks inside the selection box
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SELECT) {
+
             mode->editMode.selectionBox.selectedBlocks = {};
             mode->editMode.selectionBox.position = cursor->worldPosition;
             mode->editMode.selectionBox.origin = cursor->worldPosition;
-            // TraceLog(LOG_INFO, "Mouse Position: %f, %f", cursor->worldPosition.x, cursor->worldPosition.y);
+
         } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SELECT) {
 
             // Select the blocks inside the selection box after releasing the mouse button
@@ -97,7 +98,6 @@ void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera,
                 mode->editMode.selectionBox.direction.y = 1.0f;
             }
 
-            Color whiteOpacity = { 255, 255, 255, 100 };
             
 
             if (mode->editMode.selectionBox.direction.x == -1.0f && mode->editMode.selectionBox.direction.y == 1.0f) {
@@ -118,6 +118,8 @@ void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera,
 
             }
 
+            Color whiteOpacity = { 255, 255, 255, 100 };
+            
             // Draw the selection box
             DrawRectangleRec(mode->editMode.selectionBox.rec, whiteOpacity);
 
