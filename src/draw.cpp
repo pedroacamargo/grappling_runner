@@ -17,34 +17,6 @@ void DrawEngineGrid2D(int gridSize, int gridSpacing, Screen screen) {
     rlPopMatrix();
 }
 
-void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font font, Modes *mode) {
-  /**
-   * @def Variables
-  */
-  float buttonMargin = GUI_BUTTON_MARGIN;
-  float buttonHeight = GUI_BUTTON_HEIGHT;
-  int buttonNumber = GUI_BUTTONS_NUMBER; // !IMPORTANT
-
-  // Animate Toggle GUI
-  AnimateToggleGUI(interface, screen);
-  
-  // Draw Bottom Menu
-  DrawRectangleRec((Rectangle){interface->bottomMenu.position.x, interface->bottomMenu.position.y, interface->bottomMenu.size.width, interface->bottomMenu.size.height}, interface->GUI_color);
-
-  // Draw Toggle GUI
-  DrawToggleGUI(interface, screen, font, cursor.screenPosition);
-
-  // Draw GUI container
-  Rectangle container = {(*interface).position.x, (*interface).position.y, (*interface).width, (float) screen.screenHeight};
-  DrawRectangleRec(container, (*interface).GUI_color);
-  
-  // Draw First Button
-  DrawRectangleButton(&mode->engine_mode, cursor.screenPosition, buttonMargin,interface,buttonHeight);
-
-  // Draw menu buttons
-  DrawHamburguerMenu(interface, screen, mode);
-}
-
 void DrawPlayCameraSilhouette(Camera2D camera, Screen screen) {
   Rectangle cameraSilhouette = { camera.target.x - (camera.offset.x / camera.zoom), camera.target.y - (camera.offset.y / camera.zoom), screen.screenWidth / camera.zoom, screen.screenHeight / camera.zoom };
   DrawRectangleLinesEx(cameraSilhouette, 2.0f, BLACK);

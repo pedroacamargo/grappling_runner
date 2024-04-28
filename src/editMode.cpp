@@ -16,6 +16,7 @@ Rectangle createRectangle(Vector2 mouseWorldPosition) {
 void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera, Cursor *cursor) {
 
     // Check if the mouse is over the GUI
+    // TODO: Improve this code by using the GUI components in guiComponents.hpp
     bool overwriteGUI = 
         CheckCollisionPointRec(cursor->screenPosition, {interface.position.x, interface.position.y, interface.width, (float) screen.screenHeight }) 
         || 

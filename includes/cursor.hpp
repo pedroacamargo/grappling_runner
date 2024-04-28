@@ -3,6 +3,7 @@
 #include "raymath.h"
 #include "rlgl.h"
 #include "globals.hpp"
+#include "GUI/guiComponents.hpp"
 
 void handleCursor(Cursor *cursor, Camera2D camera, GUI *interface, Screen screen, Modes *mode);
 

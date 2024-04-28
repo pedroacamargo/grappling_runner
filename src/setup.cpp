@@ -11,7 +11,6 @@ Screen setupWindow(int width, int height, bool isFullScreen) {
     screen.screenWidth = screenWidth;
 
     InitWindow(screenWidth, screenHeight, "Grappling");
-    SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
     if (isFullScreen) ToggleFullscreen();    
 
     return screen;

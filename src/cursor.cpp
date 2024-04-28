@@ -11,61 +11,53 @@ void handleCursor(Cursor *cursor, Camera2D camera, GUI *interface, Screen screen
 
     // --------------------------------------------------------------------------------------------------------------------> GUI
     
-    Rectangle GUIdefaultArea[] = {
-        {(*interface).position.x, (*interface).position.y + (GUI_BUTTONS_NUMBER * ((GUI_BUTTON_MARGIN * 2) + GUI_BUTTON_HEIGHT)), (*interface).width,(float) screen.screenHeight},
-        {interface->position.x, interface->position.y, GUI_BUTTON_MARGIN, GUI_BUTTON_HEIGHT + (GUI_BUTTON_MARGIN * 2)},
-        {interface->position.x, interface->position.y, interface->width, GUI_BUTTON_MARGIN },
-        {interface->position.x, interface->position.y + interface->width - GUI_BUTTON_MARGIN, GUI_BUTTON_MARGIN, GUI_BUTTON_HEIGHT + (GUI_BUTTON_MARGIN * 2)},
-        // TODO: Give a button size for the bottom menu
-        {interface->bottomMenu.position.x, interface->bottomMenu.position.y, (GUI_BOTTOM_MENU_BUTTONS_NUMBER*50), interface->bottomMenu.size.height}
-    };
     // if mouse is over the GUI, change the mouse state to default
-    bool isMouseOverGUI = CheckCollisionPointRec(cursor->screenPosition, GUIdefaultArea[0]) ||
-                          CheckCollisionPointRec(cursor->screenPosition, GUIdefaultArea[1]) || 
-                          CheckCollisionPointRec(cursor->screenPosition, GUIdefaultArea[2]) || 
-                          CheckCollisionPointRec(cursor->screenPosition, GUIdefaultArea[3]) ||
-                          CheckCollisionPointRec(cursor->screenPosition, GUIdefaultArea[4]);
-
-    if (isMouseOverGUI && !IsMouseButtonDown(GRID_MOVEMENT_CONTROL_CURSOR)) {
+    int isMouseOverGUI = 0;
+    Rectangle GUIdefaultArea[5];
+    getGUIDefaultArea(interface, screen, GUIdefaultArea);
+    for (int i = 0; i < 5; i++) {
+        if (CheckCollisionPointRec(cursor->screenPosition, GUIdefaultArea[i])) {
+            isMouseOverGUI = 1;
+            break;
+        }
+    }
+    if (isMouseOverGUI > 0 && !IsMouseButtonDown(GRID_MOVEMENT_CONTROL_CURSOR)) {
         cursor->mouseState = CURSOR_DEFAULT;
     }
 
     // Toggle GUI
-    Vector2 positionToggleGUI = { (*interface).position.x - interface->toggleButton.size.width/2, screen.screenHeight / 2 - interface->toggleButton.size.height/2 };
-    Rectangle toggleGUIRec = { positionToggleGUI.x, positionToggleGUI.y, interface->toggleButton.size.width, interface->toggleButton.size.height };
+    Rectangle toggleGUIRec = getGUIToggleButtonArea(interface, screen);
     if (CheckCollisionPointRec(cursor->screenPosition,toggleGUIRec)) {
         cursor->mouseState = CURSOR_POINTING;
     }
 
+
     // BUTTONS
-    Vector2 positionButtonOne = { (*interface).position.x + GUI_BUTTON_MARGIN , (*interface).position.y + GUI_BUTTON_MARGIN }; 
-    Rectangle button_CreateRectangle = { positionButtonOne.x, positionButtonOne.y, (*interface).width - GUI_BUTTON_MARGIN, GUI_BUTTON_HEIGHT };
-    if (CheckCollisionPointRec(cursor->screenPosition,button_CreateRectangle)) {
+    Rectangle buttonEnterEditModeRec = getGUIButtonEnterEditModeArea(interface, screen);
+    if (CheckCollisionPointRec(cursor->screenPosition,buttonEnterEditModeRec)) {
         cursor->mouseState = CURSOR_POINTING;
     }
 
     // Hamburguer Button (Menu)
-    Texture2D texture = *interface->textures.hamburguerMenuIconTexture;
-    Rectangle hamburguerMenuRec = (Rectangle){0, (float) screen.screenHeight - texture.height/2 - 5, (float) texture.width/2 + GUI_HAMBURGUER_MENU_BUTTON_PADDING, (float) texture.height/2 + GUI_HAMBURGUER_MENU_BUTTON_PADDING};
+    Rectangle hamburguerMenuRec = getGUIHamburguerMenuButtonArea(interface, screen);
     if (CheckCollisionPointRec(cursor->screenPosition, hamburguerMenuRec)) {
         cursor->mouseState = CURSOR_POINTING;
         interface->bottomMenu.color = { 0, 121, 220, 255 };
-    } else {
-        interface->bottomMenu.color = WHITE;
-    }
+    } else interface->bottomMenu.color = WHITE;
+    
 
     // --------------------------------------------------------------------------------------------------------------------> Layers
 
     // Grid area
-    Rectangle gridRecs[] = {
-        { 0, 0, interface->position.x - interface->toggleButton.size.width/2, (float) screen.screenHeight - interface->bottomMenu.size.height },
-        { interface->position.x - interface->toggleButton.size.width/2, 0, interface->toggleButton.size.width/2, screen.screenHeight - interface->toggleButton.position.y - interface->toggleButton.size.height },
-        { interface->position.x - interface->toggleButton.size.width/2, interface->toggleButton.position.y + interface->toggleButton.size.height, interface->toggleButton.size.width/2, screen.screenHeight - interface->toggleButton.position.y - interface->toggleButton.size.height }
-    };
-
-    bool isMouseInGrid = CheckCollisionPointRec(cursor->screenPosition, gridRecs[0]) || 
-                         CheckCollisionPointRec(cursor->screenPosition, gridRecs[1]) ||
-                         CheckCollisionPointRec(cursor->screenPosition, gridRecs[2]);
+    Rectangle gridRecs[3];
+    int isMouseInGrid = 0;
+    getGridArea(interface, screen, gridRecs);
+    for (int i = 0; i < 3; i++) {
+        if (CheckCollisionPointRec(cursor->screenPosition, gridRecs[i])) {
+            isMouseInGrid = 1;
+            break;
+        }
+    }
 
     if (cursor->layer == DEBUG_MODE) { // Debug mode
 

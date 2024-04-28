@@ -9,9 +9,11 @@
 #include "../includes/draw.hpp"
 #include "../includes/files.hpp"
 #include "../includes/cursor.hpp"
+#include "../includes/GUI/drawGUI.hpp"
 
 int main(void) {
   Screen screen = setupWindow(1920,1080,true);
+  SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT );
 
   // --------------------------------------------------------------------------------------------------------------------> Textures
   Texture2D arrowTexture = LoadTexture("resources/grayArrow.png");
