@@ -136,7 +136,7 @@ int main(void) {
         EndMode2D();
 
         DrawGUI(camera,cursor,&interface,screen,defaultFont,&modes);
-        drawEditModeGUI(screen, &modes, interface, &cursor);
+        drawEditModeGUI(screen, &modes, &interface, &cursor);
 
         // Debug block code
         if (modes.engine_mode == DEBUG_MODE) {

@@ -26,6 +26,7 @@ typedef struct screen {
 typedef struct block {
     Rectangle rec;
     Color color;
+    Color colorAbsolute;
     int id;
     int layer;
 } Block; // Each element of the grid

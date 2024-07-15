@@ -1,5 +1,5 @@
 Pre video 3 feature:
-1- Code Cleanup and folders arrangement
+1- Code Cleanup and folders arrangement (done)
 
 Video 3 Features:
 1- Add a color customization on each block (also a function to read hex to rgb)

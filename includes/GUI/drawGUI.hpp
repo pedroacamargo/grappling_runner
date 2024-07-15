@@ -26,3 +26,12 @@ void DrawGUI(Camera2D camera, Cursor cursor, GUI *interface, Screen screen, Font
  * @param mode The engine mode
 */
 void DrawHamburguerMenu(GUI *interface, Screen screen, Modes *mode);
+
+
+/**
+* This function draws the color picker in the GUI
+* @param interface The GUI interface
+* @param screen The screen
+* @param mode The engine mode
+*/
+void DrawColorPicker(GUI *interface, Screen screen, Modes *mode, Block *selectedBlock);

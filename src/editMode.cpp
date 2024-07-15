@@ -38,6 +38,7 @@ void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera,
             Block newBlock;
             newBlock.rec = createRectangle(cursor->worldPosition);
             newBlock.color = RED;
+            newBlock.colorAbsolute = RED;
             
             newBlock.id = mode->editMode.blockIdsNumber;
             mode->editMode.blockIdsNumber += 1;
@@ -127,9 +128,9 @@ void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera,
             // Paint the selected blocks with blue
             for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
                 if (CheckCollisionRecs(mode->editMode.selectionBox.rec, mode->editMode.blockList[i].rec)) {
-                    mode->editMode.blockList[i].color = BLUE;
+                    mode->editMode.blockList[i].color = LessOpacity(mode->editMode.blockList[i].colorAbsolute, 200);
                 } else {
-                    mode->editMode.blockList[i].color = RED;
+                    mode->editMode.blockList[i].color = mode->editMode.blockList[i].colorAbsolute;
                 }
             }
         }
@@ -156,7 +157,7 @@ void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera,
 
         } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_MOVE) {
             for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
-                mode->editMode.blockList[i].color = RED;
+                mode->editMode.blockList[i].color = mode->editMode.blockList[i].colorAbsolute;
             }
             mode->editMode.moveSelectedBlock = nullptr;
         }
@@ -255,7 +256,7 @@ void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera,
         // select the block to scale
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mode->editMode.editModeState == EDIT_MODE_STATE_SCALE) {
             if (mode->editMode.scaleMode.scaleSelectedBlock != nullptr && !isMouseOverArrow.isOver && mode->editMode.scaleMode.isScaling == -1) {
-                mode->editMode.scaleMode.scaleSelectedBlock->color = RED;
+                mode->editMode.scaleMode.scaleSelectedBlock->color = mode->editMode.scaleMode.scaleSelectedBlock->colorAbsolute;
                 mode->editMode.scaleMode.scaleSelectedBlock = nullptr;
             } 
 
@@ -271,6 +272,7 @@ void editModeHandler(Modes *mode, GUI interface, Screen screen, Camera2D camera,
         }
     } 
     
+    // TODO: Optimize this code (it's being called a lot of times)
     if (mode->engine_mode != EDIT_MODE) {
         resetEditMode(mode);
     }
@@ -313,15 +315,15 @@ EditModeGUI setupEditModeGUI(Screen screen) {
     return editModeInterface;
 }
 
-void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Cursor *cursor) {
+void drawEditModeGUI(Screen screen, Modes *modes, GUI *interface, Cursor *cursor) {
     // Check if the engine is in edit mode
     if (modes->engine_mode != EDIT_MODE) return;
 
     // Draw the inspection menu in the bottom of GUI
     if (modes->editMode.selectionBox.selectedBlocks.size() >= 0 && modes->editMode.editModeState == EDIT_MODE_STATE_SELECT) {
-        DrawRectangle(interface.position.x, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT), interface.width, EDIT_MODE_INSPECT_MENU_HEIGHT, BLACK);
+        DrawRectangle(interface->position.x, interface->position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT), interface->width, EDIT_MODE_INSPECT_MENU_HEIGHT, BLACK);
 
-        DrawText(TextFormat("Selected Blocks: %i", modes->editMode.selectionBox.selectedBlocks.size()), interface.position.x + 10, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 10, 20, WHITE);
+        DrawText(TextFormat("Selected Blocks: %i", modes->editMode.selectionBox.selectedBlocks.size()), interface->position.x + 10, interface->position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 10, 20, WHITE);
 
         if (modes->editMode.selectionBox.selectedBlocks.size() == 1) {
 
@@ -333,17 +335,17 @@ void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Cursor *cursor)
                 }
             }
 
-            DrawText(TextFormat("Block ID: %i", selectedBlock->id), interface.position.x + 10, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 30, 20, WHITE);
+            DrawText(TextFormat("Block ID: %i", selectedBlock->id), interface->position.x + 10, interface->position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 30, 20, WHITE);
 
-            float posY = interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 57.5; // avoid narrowing conversion warning
-            Rectangle recX = { interface.position.x + 50, posY, interface.width - 60, 32 };
+            float posY = interface->position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 57.5; // avoid narrowing conversion warning
+            Rectangle recX = { interface->position.x + 50, posY, interface->width - 60, 32 };
             DrawRectangleRec(recX, GRAY);
-            DrawText(TextFormat("X: %.2f", selectedBlock->rec.x), interface.position.x + 20, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 60, 30, WHITE);
+            DrawText(TextFormat("X: %.2f", selectedBlock->rec.x), interface->position.x + 20, interface->position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 60, 30, WHITE);
 
-            float posY2 = interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 97.5; // avoid narrowing conversion warning
-            Rectangle recY = { interface.position.x + 50, posY2, interface.width - 60, 32 };
+            float posY2 = interface->position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 97.5; // avoid narrowing conversion warning
+            Rectangle recY = { interface->position.x + 50, posY2, interface->width - 60, 32 };
             DrawRectangleRec(recY, GRAY);
-            DrawText(TextFormat("Y: %.2f", selectedBlock->rec.y), interface.position.x + 20, interface.position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 100, 30, WHITE);
+            DrawText(TextFormat("Y: %.2f", selectedBlock->rec.y), interface->position.x + 20, interface->position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 100, 30, WHITE);
 
             // handle the move mode
             Vector2 delta = GetMouseDelta();
@@ -361,6 +363,11 @@ void drawEditModeGUI(Screen screen, Modes *modes, GUI interface, Cursor *cursor)
                 }
             }
 
+            // TODO: Create the color picker for the selected block here
+            DrawText("Color Picker", interface->position.x + 10, interface->position.y + (screen.screenHeight - EDIT_MODE_INSPECT_MENU_HEIGHT) + 135, 20, WHITE);
+            DrawColorPicker(interface, screen, modes, selectedBlock);
+
+            
         }
     }
 
@@ -411,7 +418,7 @@ void drawEditModeSelectButton(Screen screen, Modes *modes, int btnNumber, float 
 
 void resetEditMode(Modes * mode) {
     for (int i = 0; i < (int) mode->editMode.blockList.size(); i++) {
-        mode->editMode.blockList[i].color = RED;
+        mode->editMode.blockList[i].color = mode->editMode.blockList[i].colorAbsolute;
         mode->editMode.selectionBox.selectedBlocks = {};
         mode->editMode.selectionBox.size = { 0, 0 };
         mode->editMode.selectionBox.origin = { 0, 0 };
